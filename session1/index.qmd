@@ -1,0 +1,67 @@
+---
+title: "Session 1: Introduction to incorporate uncertainty into data visualisations"
+author: 
+  - name: ""
+institute: "Department of Econometrics and Business Statistics, Monash University, Australia."
+format: 
+  revealjs:
+    theme: [default, _extensions/EmilHvitfeldt/letterbox/letterbox.scss, _extensions/numbats/monash/assets/monash.scss, _extensions/mitchelloharawild/custom-callouts/resources/css/custom-callouts.scss]
+    css: [style/custom.css]
+    include-after-body: _extensions/EmilHvitfeldt/letterbox/theme.html
+    width: 1280
+    height: 750
+    slide-number: c/t
+title-slide-attributes: 
+  data-background-image: "_extensions/numbats/monash/images/bg-10.png"
+  data-background-size: contain
+  data-background-position: "justify"
+template-partials:
+  - style/title-slide.html 
+footer: "[Visualising uncertainty]"
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+# set width of code output
+options(width = 65)
+
+# set plot defaults
+ggplot2::theme_set(ggplot2::theme_gray(base_size = 14))
+
+# set figure parameters for knitr
+# knitr::opts_chunk$set(
+#   out.width = "80%",
+#   fig.width = 8,        # 7" width
+#   fig.asp = 0.618,      # the golden ratio
+#   fig.retina = 3,       # dpi multiplier for displaying HTML output on retina
+#   fig.align = "center", # center align figures
+#   dpi = 300,             # higher dpi, sharper image
+#   code.line.numbers = FALSE,
+#   comment = " "
+# )
+
+knitr::opts_chunk$set(
+  fig.width = 5,
+  fig.height = 5,
+  fig.align = "center",
+  out.width = "100%",
+  code.line.numbers = FALSE,
+  fig.retina = 4,
+  echo = FALSE,
+  message = FALSE,
+  warning = FALSE,
+  cache = FALSE,
+  dev.args = list(pointsize = 11)
+)
+
+options(
+  dplyr.print_min = 6, 
+  dplyr.print_max = 6
+)
+```
+
+# Introduction
+
+

@@ -1,0 +1,114 @@
+.button-blue {
+  background-color: #7aa6da;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: block;
+  margin: 0 auto;
+  font-size: 1em;
+  border-radius: 12px;
+  #height: 50px;
+}
+
+.button-green {
+  background-color: #65956d;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: block;
+  margin: 0 auto;
+  font-size: 1em;
+  border-radius: 12px;
+  #height: 50px;
+}
+
+.v-center-container {
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+  height: 90%;
+}
+
+.overview-text {
+  /*text-align: center; */
+  /* This is not working */
+  font-size: 2.3em;
+  font-weight: bold;
+  text-align: center;
+  color: black;
+}
+
+.sub-text {
+  /*text-align: center; */
+  font-size: 1.5em;
+  font-weight: bold;
+  text-align: center;
+  color: black;
+}
+
+.sub-text-2 {
+  /*text-align: center; */
+  font-size: 0.9em;
+  font-weight: bold;
+  text-align: center;
+  color: black;
+}
+
+/* footnote size */
+[id^=fn] {
+  font-size: 0.6em !important;
+}
+
+.vertical-center {
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+
+#vcenter {
+  vertical-align: middle;
+}
+
+.reveal #center {
+  text-align: center;
+  color: aqua;
+}
+
+.smaller {
+  font-size: 0.8em;
+}
+
+#title-slide-text>.title {
+  font-size: 2.2em;
+}
+
+/* entire box */
+#title-slide-text {
+  justify-content: center;
+  width: 100%;
+  margin-top: 12%;
+  /* border: 1px solid green; */
+}
+
+.f50 {
+  font-size: 50%;
+}
+
+.fc {
+  font-palette: blue;
+}
+
+.big-source-code {
+  font-size: 2em;
+}
+
+/* for making the source code div shorter */
+#short-r .sourceCode .numberSource .r {
+  height: 150px
+}
