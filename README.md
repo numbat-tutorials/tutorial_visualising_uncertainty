@@ -17,7 +17,10 @@ Statistics, and the R Journal. She has served as a Board Member of the
 R Foundation and is currently the co-chair of the Statistical Computing 
 and Visualisation Section of the [Statistical Society of Australia](https://www.statsoc.org.au).
 
-[Harriet Mason]() is a final year PhD student. She is working 
+[Harriet Mason](https://harrietmason.netlify.app/) is a final year PhD student. She is 
+researching how uncertainty can be effectively communicated through statistical graphics, 
+particularly in contexts where misleading interpretations must be actively avoided. 
+She is the author of several R packages, including `cassowaryr` and `ggdibbler`.
 
 **Background**: You should have a basic understanding of R to the level of working after reading 
 [R4DS](https://r4ds.hadley.nz) and working knowledge of making plots with 
