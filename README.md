@@ -2,6 +2,15 @@
 
 Website: [https://numbat-tutorials.github.io/tutorial_visualising_uncertainity/](https://numbat-tutorials.github.io/tutorial_visualising_uncertainity/)
 
+From exploring variability in a dataset to communicating the distribution of estimates, 
+uncertainty visualisation plays a role at every stage of data analysis. 
+This tutorial provides an overview of uncertainty, examines how it is represented in R, 
+and introduces a range of techniques for visualising it. The first session will introduce 
+the concept of uncertainty and cover general visualisation approaches. The second session 
+will focus on spatial data and the creative methods that emerge when uncertainty 
+must be expressed using only a limited set of visual aesthetics. Wherever there are 
+statistics and data, there is uncertainty, making the ability to visualise it effectively 
+an essential skill for any statistician.
 
 
 **Presenters**:
@@ -43,7 +52,11 @@ This session will
 
 ### Session 2: Incorporating uncertainty into spatial data visualisations
 
-This session guides you on creating journal papers and theses with Quarto, managing bibliographies, and adding code, equations, figures, and tables for reproducible, well-formatted documents.
+This session will focus specifically on uncertainty visualisation for spatial data. 
+In spatial contexts, both the x and y axes are often already used, 
+leaving less room for visualising uncertainty through conventional means. 
+This session explores these challenges and introduces tools and techniques designed 
+to incorporate uncertainty when visualisation options are limited.
 
 | **Topic**                                                                | **Description**                                                                                                     |
 | ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------- |
