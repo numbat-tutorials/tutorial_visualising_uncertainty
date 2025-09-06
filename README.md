@@ -39,7 +39,7 @@ She is the author of several R packages, including `cassowaryr` and `ggdibbler`.
 
 ## Structure of tutorial
 
-### Session 1 Introduction to incorporate uncertainty into data visualisations
+### Session 1: Introduction to incorporate uncertainty into data visualisations
 
 This session will focus on introducing common ways of representing uncertainty in data plots, why it is important, and ways to assess new approaches.
 
@@ -51,7 +51,7 @@ This session will focus on introducing common ways of representing uncertainty i
 | **Uncertainty representation in different types of problems**             | Understanding and comparing univariate and bivariate distributions, temporal and spatial data, indexes, networks |
 | **Deciding which is the best design**             | How to compare and test different designs in relation to information perceived |
 
-### Session 2: Incorporating uncertainty into spatial data visualisations
+### Session 2: Diving deeper into uncertainty visualisation using examples in spatial data
 
 This session will focus specifically on uncertainty visualisation for spatial data. 
 In spatial contexts, both the x and y axes are often already used, 
