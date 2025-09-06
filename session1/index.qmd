@@ -64,4 +64,8 @@ options(
 
 # Introduction
 
+- bag plot
+- model only (regression, wages example) vs adding data
+- ggdist
+- tidyindex
 
