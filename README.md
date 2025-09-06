@@ -47,7 +47,7 @@ This session will focus on introducing common ways of representing uncertainty i
 | ----------------------- | ---------------------------------------------------------------------------------------------------------------------- |
 | **Introduction**        | What is uncertainty? What is the goal for visualisation |
 | **Common measures and representations**      | Common approaches for including representation of uncertainty in data plots relative to the type of uncertainty measure: show the data, error bars, estimates, models |
-| **How this affects perception**          | Including of omitting uncertainty representation can change the interpretation of information. Understand how this might affect communication decisions. |
+| **How this affects perception**          | Including or omitting uncertainty representation can change the interpretation of information. Understand how this might affect communication decisions. |
 | **Uncertainty representation in different types of problems**             | Understanding and comparing univariate and bivariate distributions, temporal and spatial data, indexes, networks |
 | **Deciding which is the best design**             | How to compare and test different designs in relation to information perceived |
 
