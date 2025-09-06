@@ -39,7 +39,7 @@ She is the author of several R packages, including `cassowaryr` and `ggdibbler`.
 
 ## Structure of tutorial
 
-### Session 1: Introduction to incorporate uncertainty into data visualisations
+### Session 1: Foundations of uncertainty in data visualisations
 
 This session will focus on introducing common ways of representing uncertainty in data plots, why it is important, and ways to assess new approaches.
 
