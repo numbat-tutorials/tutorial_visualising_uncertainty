@@ -62,6 +62,56 @@ options(
 )
 ```
 
-# Introduction
+# Topic 1 - Unique challenges of visualising map data
+
+- Why such a focus on spatial visualisations?
+
+Spatial case is a good example to work through because the aesthetics we have to express estimates are limited-
+- Variables that are…
+    - Fixed = 
+        - position
+        - size
+        - shape
+    - Variables (all kind of change the same thing)
+        - colour / fill
+        - alpha (transparency) - indistinguishble from changing the colour value tbh
+- Not uncommon for maps to warp the fixed elements, or get creative and add stuff 
+    - hex plots
+    - cartogram
+    - grid layout
+    - glyph maps
+
+
+# Topic 2: Hands-on spatial example -  getting data with quantified uncertainty
+
+- General structure of spatial data and basic data cleaning 
+- Sources of uncertainty in spatial cases
+    - e.g. data summarised for a specific region
+    - also have usual stuff like estimated values from a spatial model.
+- Methods to arrive at quantified uncertainty
+    - Bootstrapping
+    - Theoretical distribution (assumed normal?)
+
+
+## Topic 3: Methods for visualising uncertainty in maps 
+
+Go through some popular packages. Show what format the data needs to be in. Show how to make plots using this data format. 
+
+Different packages require different input and cleaning processes
+- Vizumap: distribution as a q function
+- ggdibbler: distribution from distributional
+- biscale: estimate and standard error as two variables
+
+Spatial cases
+- Choropleth map
+    - ggplot2
+- Bivar & VSUP
+    - kind of made up with no obvious way to align results with hypothesis testing
+    - 2D palette
+    - vizumap, biscale, ggdibbler
+- Pixel maps
+    - ggdibbler and vizumap methods
+- Glyph maps
+    - vizumap
 
 
