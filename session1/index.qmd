@@ -69,3 +69,50 @@ options(
 - ggdist
 - tidyindex
 
+## Topic 2:  Common measures and representations
+
+*I have sometimes had a bit of confusion about when to plot uncertainty vs original when talking to people, so I added a slide for the in useR talk that mentioned when you have a situation where you need to do an uncertainty visualisation rather than just showing the data. It seemed to make it a bit clearer for the audience. The slide basically said:*
+- Original data can show
+    - small sample sizes, high variability, missing values, other failled assumptions
+- However, original data is not always…
+    - Available
+        - anonymised data, data is combined from multiple sources,  theoretical values, etc
+    - Relevant
+        - Sampling distribution, distribution of model parameters, etc
+    - Determnistic
+        - data with measurement error, bounded data, etc
+
+
+## Topic 3:  How this affects perception
+*notes taken from useR talk slides*
+Why can’t we just treat uncertainty as another variable?
+* Uncertainty is not just another variable…
+    * It presents an interesting perceptual problem
+    * Two sides of the same coin
+* Usually do not want variables to interfere with each other
+    * In uncertainty visualisation, the opposite is true
+    * This is the core of the signal suppression approach we implement
+
+## Topic 4:  Uncertainty representation in different types of problems
+*from the ggdibbler notes the conditional line plot. All the examples are from time series packages, because I spent a bit of time looking for the one that returned a distributional forecast so I could use it in an example*
+Common ways we express uncertainty in R and when you would see them out in the wild?
+- Distributional (vectorised distributions that are wrappers on the d, p, q, r functions) 
+    - e.g. when you get it as output - fable, some Bayes stuff (e.g. posterior)
+- Base R (d, p, q, r functions)
+- Confidence intervals
+    - hi low variables in the forecast packages
+- Bootstrapping (?)
+
+
+## Topic 5: Deciding which is the best design
+*notes taken from useR talk slides*
+Evaluation criteria - Uncertainty visualisation should…
+1. Reinforce justified signals
+2. Hide signals that are just noise
+Similar logic to a hypothesis test (but not as binary, and without set thing you are checking for)
+
+*notes taken from useR talk slides*
+Accessibility considerations
+- Colour
+    - 2D palette is harder to read as colour is not a simple 3D space. Mapping a variable to saturation hurts accessibility.
+(Maybe specifically mention this in section 2?. I am not sure of other accessibility issues other than colour issues (and maybe size?).
