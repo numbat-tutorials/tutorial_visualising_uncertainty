@@ -61,9 +61,9 @@ to incorporate uncertainty when visualisation options are limited.
 
 | **Topic**                                                                | **Description**                                                                                                     |
 | ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------- |
-| **Introduction to spatial visualisation**                                    | Unique challenges of visualising map data. Why do new techniques have such a focus on spatial visualisations?|
-| **Hands on mapping example**                                        | Work through the initial stages of a visualisation task and understand how to hold onto and quantify uncertainty in data analysis. |
-| **R packages for visualising uncertainty in maps**                                                         | Go through some popular packages for visualising spatial uncertainty in R. See what format the uncertainty needs to be in for each package and the plot types that can be made.        |
+| **Introduction to spatial visualisation**                                    | Understand the unique challenges of visualising map data.  Learn why many newly developed techniques have a large focus on spatial visualisations. |
+| **Hands on mapping example**                                        | Work through the initial stages of a visualisation task with special focus on understanding how to quantify uncertainty, and avoid losing it as you move through the stages of a data analysis. |
+| **R packages for visualising uncertainty in maps**                                                         | Go through some popular packages for visualising spatial uncertainty in R. Understand the data format each package accepts, and see the various plot options.  |
 
 
 
