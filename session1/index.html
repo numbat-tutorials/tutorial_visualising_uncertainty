@@ -248,7 +248,7 @@ Harriet Mason, Dianne Cook
 <div class="columns">
 <div class="column" style="width:20%;">
 <p><br><br> <em>You don’t know what you don’t know</em></p>
-</div><div class="column" style="width:60%;">
+</div><div class="column" style="width:50%;">
 <ul>
 <li class="fragment">Statistical (aleatory) uncertainty
 <ul>
@@ -265,7 +265,7 @@ Harriet Mason, Dianne Cook
 <li class="fragment"><em>can you think of any others?</em></li>
 </ul></li>
 </ul>
-</div><div class="column" style="width:20%;">
+</div><div class="column" style="width:30%;">
 <div class="fragment">
 <div class="callout callout-important callout-style-simple">
 <div class="callout-body">
@@ -273,7 +273,7 @@ Harriet Mason, Dianne Cook
 <i class="callout-icon"></i>
 </div>
 <div class="callout-content">
-<div class="large">
+<div style="font-size: 150%;">
 <p>Mostly we are concerned about representing statistical uncertainty.</p>
 </div>
 </div>
@@ -288,7 +288,7 @@ Harriet Mason, Dianne Cook
 
 </section>
 <section id="show-the-data-14" class="slide level2">
-<h2>1. Show the data <span class="f50">(1/4)</span></h2>
+<h2>Show the data <span class="f50">(1/4)</span></h2>
 <div class="columns">
 <div class="column">
 <div class="callout callout-note callout-style-simple">
@@ -297,7 +297,9 @@ Harriet Mason, Dianne Cook
 <i class="callout-icon"></i>
 </div>
 <div class="callout-content">
+<div style="font-size: 150%;">
 <p>The most valuable way to show uncertainty is to show all the data.</p>
+</div>
 </div>
 </div>
 </div>
@@ -353,7 +355,7 @@ Harriet Mason, Dianne Cook
 </div></div>
 </section>
 <section id="show-the-data-24" class="slide level2">
-<h2>1. Show the data <span class="f50">(2/4)</span></h2>
+<h2>Show the data <span class="f50">(2/4)</span></h2>
 <div class="columns">
 <div class="column">
 <div class="cell" data-layout-align="center">
@@ -380,7 +382,7 @@ Harriet Mason, Dianne Cook
 </div></div>
 </section>
 <section id="show-the-data-34" class="slide level2">
-<h2>1. Show the data <span class="f50">(3/4)</span></h2>
+<h2>Show the data <span class="f50">(3/4)</span></h2>
 <div class="columns">
 <div class="column">
 <p>What would be other common ways to display this data?</p>
@@ -473,10 +475,12 @@ Harriet Mason, Dianne Cook
 <span id="cb4-4"><a href="" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-5"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(oz_votes_grn, <span class="fu">aes</span>(<span class="at">fill=</span>perc_GRN)) <span class="sc">+</span></span>
 <span id="cb4-6"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">colour=</span><span class="st">"white"</span>) <span class="sc">+</span></span>
-<span id="cb4-7"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_c</span>(<span class="at">direction=</span><span class="sc">-</span><span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb4-8"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_map</span>() <span class="sc">+</span></span>
-<span id="cb4-9"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"right"</span>, </span>
-<span id="cb4-10"><a href="" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.title =</span> <span class="fu">element_blank</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-7"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_c</span>(<span class="at">direction=</span><span class="sc">-</span><span class="dv">1</span>, <span class="at">trans =</span> <span class="st">"log"</span>, </span>
+<span id="cb4-8"><a href="" aria-hidden="true" tabindex="-1"></a>    <span class="at">guide =</span> <span class="st">"colourbar"</span>, </span>
+<span id="cb4-9"><a href="" aria-hidden="true" tabindex="-1"></a>    <span class="at">labels =</span> scales<span class="sc">::</span><span class="fu">label_number</span>(<span class="at">accuracy =</span> <span class="fl">0.1</span>)) <span class="sc">+</span></span>
+<span id="cb4-10"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_map</span>() <span class="sc">+</span></span>
+<span id="cb4-11"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"right"</span>, </span>
+<span id="cb4-12"><a href="" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.title =</span> <span class="fu">element_blank</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -493,7 +497,7 @@ Harriet Mason, Dianne Cook
 </div></div>
 </section>
 <section id="show-the-data-44" class="slide level2">
-<h2>1. Show the data <span class="f50">(4/4)</span></h2>
+<h2>Show the data <span class="f50">(4/4)</span></h2>
 <div class="columns">
 <div class="column">
 <div class="callout callout-note callout-style-simple">
@@ -502,7 +506,9 @@ Harriet Mason, Dianne Cook
 <i class="callout-icon"></i>
 </div>
 <div class="callout-content">
+<div style="font-size: 150%;">
 <p>Even when you think you are showing the data, it is often an estimate and some representation of uncertainty.</p>
+</div>
 </div>
 </div>
 </div>
@@ -510,14 +516,14 @@ Harriet Mason, Dianne Cook
 <p>The election data is actually estimates. The electorates are strata, so what was shown was % computed on each strata.</p>
 <p>What is the full data? What are different strata possible?</p>
 <div class="fragment">
+<div style="font-size: 70%;">
 <p>Generally, we trust the values provided by AEC, and we explore the distribution of votes by different strata in the electorate structure. The goal being to understand the variability in the way the people have voted, identify electorates where the winner might flip next time, …</p>
 </div>
-</div><div class="column">
-<div class="fragment">
-<p><br><br> <br><br> <br><br> <br><br> <br><br></p>
-<div class="blockquote">
-<p>It’s really difficult to concretely define uncertainty!</p>
 </div>
+</div><div class="column" style="width:25%;">
+<div class="fragment">
+<p><br><br> <br><br> <br><br> <br><br> <br><br><br></p>
+<p><em>It’s really difficult to concretely define uncertainty!</em></p>
 </div>
 </div></div>
 </section>
@@ -535,25 +541,46 @@ Harriet Mason, Dianne Cook
 <ul>
 <li>variation</li>
 <li>variability</li>
-<li>variance</li>
-<li>standard deviation</li>
-<li>error</li>
-<li>IQR</li>
-<li>MAD</li>
+<li>variance/standard deviation</li>
+<li>error/standard error</li>
+<li>IQR/MAD</li>
 <li>noise</li>
 </ul>
-</div><div class="column" style="width:25%;">
+</div><div class="column" style="width:40%;">
 <div class="callout callout-important callout-style-simple">
 <div class="callout-body">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-content">
-<p>Displaying uncertainty is often considered to be <strong>signal suppression</strong>.</p>
+<div style="font-size: 150%;">
+<p>Displaying uncertainty is described <strong>signal suppression</strong>.</p>
+</div>
 </div>
 </div>
 </div>
 </div></div>
+</section>
+<section id="example-1" class="slide level2">
+<h2>Example 1</h2>
+<p>Distributions</p>
+</section>
+<section id="example-2" class="slide level2">
+<h2>Example 2</h2>
+<p>Confidence intervals</p>
+</section>
+<section id="example-3" class="slide level2">
+<h2>Example 3</h2>
+<p>Forecasts</p>
+</section>
+<section id="your-turn" class="slide level2">
+<h2>Your turn</h2>
+<p>Play with different ggdist options</p>
+</section></section>
+<section>
+<section id="how-this-affects-perception" class="title-slide slide level1 transition-slide center">
+<h1>How this affects perception</h1>
+
 </section>
 <section id="why-signal-suppression-14" class="slide level2">
 <h2>Why “signal suppression”? <span class="f50">(1/4)</span></h2>
@@ -589,16 +616,13 @@ Examples of this: regression line but no data.
     - Deterministic
         - data with measurement error, bounded data, etc
 -->
-</section></section>
-<section>
-<section id="how-this-affects-perception" class="title-slide slide level1 transition-slide center">
-<h1>How this affects perception</h1>
-
 </section>
 <section id="section-1" class="slide level2">
 <h2></h2>
 <!-- *notes taken from useR talk slides*-->
 <p>Why can’t we just treat uncertainty as another variable? * Uncertainty is not just another variable… * It presents an interesting perceptual problem * Two sides of the same coin * Usually do not want variables to interfere with each other * In uncertainty visualisation, the opposite is true * This is the core of the signal suppression approach we implement</p>
+<!-- Need to have a gene expression example with rationale here 
+and to emphasize "campared to what" -->
 </section></section>
 <section>
 <section id="uncertainty-representation-in-different-types-of-problems" class="title-slide slide level1 transition-slide center">

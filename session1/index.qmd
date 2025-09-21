@@ -146,7 +146,7 @@ Caution: Incorporating uncertainty into plots is far from  state of best practic
 *You don't know what you don't know*
 
 :::
-::: {.column width=60%}
+::: {.column width=50%}
 ::: {.incremental}
 - Statistical (aleatory) uncertainty
     - notion of randomness
@@ -162,14 +162,16 @@ Caution: Incorporating uncertainty into plots is far from  state of best practic
 :::
 
 :::
-::: {.column width=20%}
+::: {.column width=30%}
 
 ::: {.fragment}
 
 ::: {.callout-important appearance="simple"}
 
-::: {.large}
+::: {style="font-size: 150%;"}
+
 Mostly we are concerned about representing statistical uncertainty.
+
 :::
 
 :::
@@ -181,14 +183,20 @@ Mostly we are concerned about representing statistical uncertainty.
 
 # Common measures and representations {.transition-slide  .center-align}
 
-## 1. Show the data [(1/4)]{.f50}
+## Show the data [(1/4)]{.f50}
 
 :::: {.columns}
 
 ::: {.column}
 
 ::: {.callout-note appearance="simple"}
+
+::: {style="font-size: 150%;"}
+
 The most valuable way to show uncertainty is to show all the data.
+
+:::
+
 :::
 
 Plot shows first preference % for greens in the 2019 Australian Federal Election, for the 150 electorates. 
@@ -241,7 +249,7 @@ e_grn |>
 :::
 ::::
 
-## 1. Show the data [(2/4)]{.f50}
+## Show the data [(2/4)]{.f50}
 
 :::: {.columns}
 
@@ -272,7 +280,7 @@ This plot ONLY shows uncertainty!
 :::
 ::::
 
-## 1. Show the data [(3/4)]{.f50}
+## Show the data [(3/4)]{.f50}
 
 :::: {.columns}
 
@@ -359,7 +367,9 @@ oz_votes_grn <- full_join(oz_votes, e_grn, by=c("NAME"="DivisionNm"))
 
 ggplot(oz_votes_grn, aes(fill=perc_GRN)) +
   geom_sf(colour="white") +
-  scale_fill_viridis_c(direction=-1) +
+  scale_fill_viridis_c(direction=-1, trans = "log", 
+    guide = "colourbar", 
+    labels = scales::label_number(accuracy = 0.1)) +
   theme_map() +
   theme(legend.position = "right", 
     legend.title = element_blank())
@@ -372,7 +382,7 @@ ggplot(oz_votes_grn, aes(fill=perc_GRN)) +
 :::
 ::::
 
-## 1. Show the data [(4/4)]{.f50}
+## Show the data [(4/4)]{.f50}
 
 :::: {.columns}
 
@@ -380,7 +390,11 @@ ggplot(oz_votes_grn, aes(fill=perc_GRN)) +
 
 ::: {.callout-note appearance="simple"}
 
+::: {style="font-size: 150%;"}
+
 Even when you think you are showing the data, it is often an estimate and some representation of uncertainty.
+
+:::
 
 :::
 
@@ -391,11 +405,15 @@ The election data is actually estimates. The electorates are strata, so what was
 What is the full data? What are different strata possible?
 
 ::: {.fragment}
+
+::: {style="font-size: 70%;"}
 Generally, we trust the values provided by AEC, and we explore the distribution of votes by different strata in the electorate structure. The goal being to understand the variability in the way the people have voted, identify electorates where the winner might flip next time, ... 
 :::
 
 :::
-::: {.column}
+
+:::
+::: {.column width=25%}
 
 ::: {.fragment}
 
@@ -403,11 +421,11 @@ Generally, we trust the values provided by AEC, and we explore the distribution 
 <br><br>
 <br><br>
 <br><br>
-<br><br>
+<br><br><br>
 
-::: {.blockquote}
-It's really difficult to concretely define uncertainty!
-:::
+
+*It's really difficult to concretely define uncertainty!*
+
 
 :::
 
@@ -430,22 +448,43 @@ Names for uncertainty, needed to understand main thing:
 
 - variation 
 - variability
-- variance
-- standard deviation
-- error
-- IQR
-- MAD
+- variance/standard deviation
+- error/standard error
+- IQR/MAD
 - noise 
 
 :::
-::: {.column width=25%}
+::: {.column width=40%}
 
 ::: {.callout-important appearance="simple"}
 
-Displaying uncertainty is often considered to be **signal suppression**.
+::: {style="font-size: 150%;"}
+
+Displaying uncertainty is described **signal suppression**.
+:::
+
 :::
 :::
 ::::
+
+## Example 1
+
+Distributions
+
+## Example 2
+
+Confidence intervals
+
+## Example 3
+
+Forecasts
+
+## Your turn
+
+Play with different ggdist options
+
+
+# How this affects perception {.transition-slide}
 
 ## Why "signal suppression"? [(1/4)]{.f50}
 
@@ -499,8 +538,6 @@ ggplot(melbtemp, aes(x=month, y=temp)) +
         - data with measurement error, bounded data, etc
 -->
 
-# How this affects perception {.transition-slide}
-
 ##
 
 <!-- *notes taken from useR talk slides*-->
@@ -512,6 +549,9 @@ Why can't we just treat uncertainty as another variable?
 * Usually do not want variables to interfere with each other
     * In uncertainty visualisation, the opposite is true
     * This is the core of the signal suppression approach we implement
+
+<!-- Need to have a gene expression example with rationale here 
+and to emphasize "campared to what" -->
 
 # Uncertainty representation in different types of problems {.transition-slide}
 
