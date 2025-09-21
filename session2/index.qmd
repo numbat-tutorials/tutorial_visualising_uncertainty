@@ -1,7 +1,7 @@
 ---
 title: "Session 2: Incorporating uncertainty into spatial data visualisations"
 author: 
-  - name: ""
+  - name: "Harriet Mason, Dianne Cook"
 institute: "Department of Econometrics and Business Statistics, Monash University, Australia."
 format: 
   revealjs:

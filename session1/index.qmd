@@ -1,91 +1,511 @@
 ---
-title: "Session 1: Introduction to incorporate uncertainty into data visualisations"
+title: "Visualising Uncertainty"
 author: 
-  - name: ""
-institute: "Department of Econometrics and Business Statistics, Monash University, Australia."
+  - name: "Harriet Mason, Dianne Cook"
+institute: "Department of Econometrics and Business Statistics"
 format: 
   revealjs:
-    theme: [default, _extensions/EmilHvitfeldt/letterbox/letterbox.scss, _extensions/numbats/monash/assets/monash.scss, _extensions/mitchelloharawild/custom-callouts/resources/css/custom-callouts.scss]
-    css: [style/custom.css]
-    include-after-body: _extensions/EmilHvitfeldt/letterbox/theme.html
-    width: 1280
-    height: 750
+    theme: 
+      - default 
+      - custom.scss
+    width: 1600
+    height: 900
+    margin: 0.1
     slide-number: c/t
-title-slide-attributes: 
-  data-background-image: "_extensions/numbats/monash/images/bg-10.png"
-  data-background-size: contain
-  data-background-position: "justify"
-template-partials:
-  - style/title-slide.html 
-footer: "[Visualising uncertainty]"
+code-line-numbers: false
+code-fold: true
+message: false
+highlight-style: pygments
+title-slide-attributes:
+  data-background-color: "#006dae"
+  data-background-opacity: "0.5"
+footer: "[https://numbat-tutorials.github.io/tutorial_visualising_uncertainty/](https://numbat-tutorials.github.io/tutorial_visualising_uncertainty/)"
 ---
 
-```{r}
-#| label: setup
-#| include: false
+```{r, include = FALSE}
+#| label: libraries-for-participants
+library(ggplot2)
+library(tidyr)
+library(dplyr)
+library(readr)
+library(readxl)
+library(stringr)
+library(forcats)
+library(colorspace)
+library(patchwork)
+library(broom)
+library(ggbeeswarm)
+library(ggmosaic)
+library(nullabor)
+library(ozmaps)
+library(sf)
+library(rmapshaper)
+library(ggthemes)
+library(conflicted)
+conflicts_prefer(dplyr::filter)
+conflicts_prefer(dplyr::select)
+conflicts_prefer(dplyr::slice)
+conflicts_prefer(dplyr::rename)
+conflicts_prefer(dplyr::mutate)
+conflicts_prefer(dplyr::summarise)
+```
 
-# set width of code output
-options(width = 65)
-
-# set plot defaults
-ggplot2::theme_set(ggplot2::theme_gray(base_size = 14))
-
-# set figure parameters for knitr
-# knitr::opts_chunk$set(
-#   out.width = "80%",
-#   fig.width = 8,        # 7" width
-#   fig.asp = 0.618,      # the golden ratio
-#   fig.retina = 3,       # dpi multiplier for displaying HTML output on retina
-#   fig.align = "center", # center align figures
-#   dpi = 300,             # higher dpi, sharper image
-#   code.line.numbers = FALSE,
-#   comment = " "
-# )
-
+```{r, include = FALSE}
+#| label: options-for-nice-slides
+options(width = 200)
 knitr::opts_chunk$set(
   fig.width = 5,
   fig.height = 5,
   fig.align = "center",
+  dev.args = list(bg = 'transparent'),
   out.width = "100%",
-  code.line.numbers = FALSE,
-  fig.retina = 4,
-  echo = FALSE,
-  message = FALSE,
+  fig.retina = 3,
+  echo = TRUE,
   warning = FALSE,
-  cache = FALSE,
-  dev.args = list(pointsize = 11)
-)
-
-options(
-  dplyr.print_min = 6, 
-  dplyr.print_max = 6
+  message = FALSE,
+  cache = FALSE
 )
 ```
 
-# Introduction
+```{r, include = FALSE}
+#| label: theme-for-nice-plots
+theme_set(ggthemes::theme_gdocs(base_size = 14) +
+  theme(plot.background = 
+        element_rect(fill = 'transparent', colour = NA),
+        #axis.line.x = element_line(color = "black", 
+        #                           linewidth = 0.4),
+        #axis.line.y = element_line(color = "black", 
+        #                           linewidth = 0.4),
+        panel.grid.major = element_line(color = "grey90"),
+        axis.ticks = element_line(color = "black"),
+        plot.title.position = "plot",
+        plot.title = element_text(size = 14),
+        panel.background  = 
+          element_rect(fill = 'transparent', colour = "black"),
+        legend.background = 
+          element_rect(fill = 'transparent', colour = NA),
+        legend.key        = 
+          element_rect(fill = 'transparent', colour = NA)
+  ) 
+)
+```
 
-- bag plot
-- model only (regression, wages example) vs adding data
-- ggdist
-- tidyindex
 
-## Topic 2:  Common measures and representations
+## Welcome 👋🏼 
 
-*I have sometimes had a bit of confusion about when to plot uncertainty vs original when talking to people, so I added a slide for the in useR talk that mentioned when you have a situation where you need to do an uncertainty visualisation rather than just showing the data. It seemed to make it a bit clearer for the audience. The slide basically said:*
+:::: {.columns}
+::: {.column width="45%"}
+
+Thanks for joining to learn about making data plots today. 
+
+::: {style="font-size: 80%;"}
+
+🦘 **[Di](https://www.dicook.org)** is a *Professor of Statistics*. She has more than 30 years of research and teaching of data visualisation, and open source software development.  <br>
+🐨 **[Harriet](https://harrietmason.netlify.app/)** is a *final year PhD student*, working on better representation of uncertainty in data visualisations, particularly focused on spatial data. <br>
+
+*We are both in Econometrics and Business Statistics, at Monash University.* 
+:::
+
+:::
+::: {.column width="5%"}
+
+:::
+::: {.column width="45%"}
+::: {.fragment}
+
+🧩 Feel free to ask questions any time. 🤔
+
+::: {style="font-size: 80%;"}
+<br>
+
+🎯 The objectives for today are:
+
+1. 
+2. 
+3. 
+
+Caution: Incorporating uncertainty into plots is far from  state of best practices. This is our best attempt to summarise current literature, what we find to be valuable approaches and available tools.
+
+:::
+
+:::
+:::
+::::
+
+
+# Session 1 - Foundations of uncertainty in data visualisations
+
+# Introduction {.transition-slide .center-align}
+
+## What is uncertainty?
+
+:::: {.columns}
+::: {.column width=20%}
+
+<br><br>
+*You don't know what you don't know*
+
+:::
+::: {.column width=60%}
+::: {.incremental}
+- Statistical (aleatory) uncertainty
+    - notion of randomness
+    - variability in the outcome/measurements
+- Systemic (epistemic) uncertainty
+    - due to bias, misunderstanding, assumptions
+    - measurement error
+    - handling of missing information, and pre-processing choices
+    - model choices
+    - incorrect comparisons
+    - *can you think of any others?*
+
+:::
+
+:::
+::: {.column width=20%}
+
+::: {.fragment}
+
+::: {.callout-important appearance="simple"}
+
+::: {.large}
+Mostly we are concerned about representing statistical uncertainty.
+:::
+
+:::
+
+:::
+
+:::
+::::
+
+# Common measures and representations {.transition-slide  .center-align}
+
+## 1. Show the data [(1/4)]{.f50}
+
+:::: {.columns}
+
+::: {.column}
+
+::: {.callout-note appearance="simple"}
+The most valuable way to show uncertainty is to show all the data.
+:::
+
+Plot shows first preference % for greens in the 2019 Australian Federal Election, for the 150 electorates. 
+
+Plot of choice is the **jittered dotplot**, where points are spread vertically according to density.
+
+
+:::
+::: {.column}
+
+::: {style="font-size: 70%;"}
+```{r}
+#| label: election1
+election <- read_csv(here::here("session1/data/election2019.csv"),
+  skip = 1,
+  col_types = cols(
+    .default = col_character(),
+    OrdinaryVotes = col_double(),
+    AbsentVotes = col_double(),
+    ProvisionalVotes = col_double(),
+    PrePollVotes = col_double(),
+    PostalVotes = col_double(),
+    TotalVotes = col_double(),
+    Swing = col_double()
+  )
+)
+e_grn <- election |>
+  group_by(DivisionID) |>
+  summarise(
+    DivisionNm = unique(DivisionNm),
+    State = unique(StateAb),
+    votes_GRN = TotalVotes[which(PartyAb == "GRN")],
+    votes_total = sum(TotalVotes)
+  ) |>
+  mutate(perc_GRN = votes_GRN / votes_total * 100)
+
+e_grn |>
+  mutate(State = fct_reorder(State, perc_GRN)) |>
+  ggplot(aes(x=perc_GRN, y=State)) +
+    geom_quasirandom(groupOnX = FALSE, varwidth = TRUE) +
+    labs(
+      x = "First preference votes %",
+      y = ""
+    ) +
+  xlim(c(0,50))
+
+```
+:::
+
+:::
+::::
+
+## 1. Show the data [(2/4)]{.f50}
+
+:::: {.columns}
+
+::: {.column}
+
+```{r}
+#| label: election1
+#| echo: false
+```
+
+:::
+::: {.column}
+
+What do we learn?
+
+::: {.incremental}
+- Different number of observations in each state
+- One outlier in Vic
+- As a group, ACT has higher %'s
+- Vic has a small cluster of points with higher %'s
+- %'s are mostly very low
+:::
+
+::: {.fragment}
+This plot ONLY shows uncertainty! 
+:::
+
+:::
+::::
+
+## 1. Show the data [(3/4)]{.f50}
+
+:::: {.columns}
+
+::: {.column}
+
+What would be other common ways to display this data?
+
+::: {.incremental}
+- Side-by-side boxplots
+- Side-by-side violin
+- On a map of electorates
+:::
+
+::: {.fragment}
+For each plot think about 
+
+- what is uncertainty, and what is estimate
+- what the plot shows or hides
+
+:::
+
+:::
+::: {.column}
+
+
+::: {.panel-tabset}
+
+## Dotplot
+
+```{r}
+#| label: election1
+#| echo: false
+#| out-width: 80%
+```
+
+## Boxplot
+
+::: {style="font-size: 70%;"}
+```{r}
+#| label: election2
+#| out-width: 80%
+e_grn |>
+  mutate(State = fct_reorder(State, perc_GRN)) |>
+  ggplot(aes(x=perc_GRN, y=State)) +
+    geom_boxplot(varwidth = TRUE) +
+    labs(
+      x = "First preference votes %",
+      y = ""
+    ) +
+  xlim(c(0,50))
+```
+:::
+
+## Violin
+
+::: {style="font-size: 70%;"}
+```{r}
+#| label: election3
+#| out-width: 80%
+e_grn |>
+  mutate(State = fct_reorder(State, perc_GRN)) |>
+  ggplot(aes(x=perc_GRN, y=State)) +
+    geom_violin(draw_quantiles = c(0.25, 0.5, 0.75),
+      fill="#006dae", alpha=0.5) +
+    labs(
+      x = "First preference votes %",
+      y = ""
+    ) +
+  xlim(c(0,50))
+```
+:::
+
+## Map
+
+::: {style="font-size: 70%;"}
+```{r}
+#| label: election4
+#| fig-width: 8
+#| fig-height: 6
+#| out-width: 100%
+oz_states <- ozmaps::ozmap_states %>% filter(NAME != "Other Territories")
+oz_votes <- rmapshaper::ms_simplify(ozmaps::abs_ced)
+oz_votes_grn <- full_join(oz_votes, e_grn, by=c("NAME"="DivisionNm"))
+
+ggplot(oz_votes_grn, aes(fill=perc_GRN)) +
+  geom_sf(colour="white") +
+  scale_fill_viridis_c(direction=-1) +
+  theme_map() +
+  theme(legend.position = "right", 
+    legend.title = element_blank())
+```
+:::
+
+
+:::
+
+:::
+::::
+
+## 1. Show the data [(4/4)]{.f50}
+
+:::: {.columns}
+
+::: {.column}
+
+::: {.callout-note appearance="simple"}
+
+Even when you think you are showing the data, it is often an estimate and some representation of uncertainty.
+
+:::
+
+<br><br>
+
+The election data is actually estimates. The electorates are strata, so what was shown was % computed on each strata. 
+
+What is the full data? What are different strata possible?
+
+::: {.fragment}
+Generally, we trust the values provided by AEC, and we explore the distribution of votes by different strata in the electorate structure. The goal being to understand the variability in the way the people have voted, identify electorates where the winner might flip next time, ... 
+:::
+
+:::
+::: {.column}
+
+::: {.fragment}
+
+<br><br>
+<br><br>
+<br><br>
+<br><br>
+<br><br>
+
+::: {.blockquote}
+It's really difficult to concretely define uncertainty!
+:::
+
+:::
+
+:::
+::::
+
+## Terminology
+
+:::: {.columns}
+
+::: {.column}
+
+Names for main thing:
+
+- estimate
+- statistic
+- signal 
+
+Names for uncertainty, needed to understand main thing:
+
+- variation 
+- variability
+- variance
+- standard deviation
+- error
+- IQR
+- MAD
+- noise 
+
+:::
+::: {.column width=25%}
+
+::: {.callout-important appearance="simple"}
+
+Displaying uncertainty is often considered to be **signal suppression**.
+:::
+:::
+::::
+
+## Why "signal suppression"? [(1/4)]{.f50}
+
+Regression
+
+<!-- 
+Examples of this: regression line but no data. 
+-->
+
+## Why "signal suppression"? [(2/4)]{.f50}
+
+Longitudinal data
+
+## Why "signal suppression"? [(3/4)]{.f50}
+
+Forecasts
+
+## Why "signal suppression"? [(4/4)]{.f50}
+
+Map
+
+
+```{r}
+#| eval: false
+#| echo: false
+melbtemp <- read_csv(here::here("session1/data/melb_temp.csv")) |>
+  janitor::clean_names() |>
+  rename(temp = maximum_temperature_degree_c) |>
+  filter(!is.na(temp)) |>
+  dplyr::select(year, month, day, temp)
+
+ggplot(melbtemp, aes(x=month, y=temp)) +
+  geom_quasirandom(alpha=0.1)
+
+```
+<!-- example data sets: melbourne temperature, australias election -->
+
+##
+
+<!-- *I have sometimes had a bit of confusion about when to plot uncertainty vs original when talking to people, so I added a slide for the in useR talk that mentioned when you have a situation where you need to do an uncertainty visualisation rather than just showing the data. It seemed to make it a bit clearer for the audience. The slide basically said:*-->
+
+<!--
 - Original data can show
-    - small sample sizes, high variability, missing values, other failled assumptions
+    - small sample sizes, high variability, missing values, other failed assumptions
 - However, original data is not always…
     - Available
         - anonymised data, data is combined from multiple sources,  theoretical values, etc
     - Relevant
         - Sampling distribution, distribution of model parameters, etc
-    - Determnistic
+    - Deterministic
         - data with measurement error, bounded data, etc
+-->
 
+# How this affects perception {.transition-slide}
 
-## Topic 3:  How this affects perception
-*notes taken from useR talk slides*
-Why can’t we just treat uncertainty as another variable?
+##
+
+<!-- *notes taken from useR talk slides*-->
+
+Why can't we just treat uncertainty as another variable?
 * Uncertainty is not just another variable…
     * It presents an interesting perceptual problem
     * Two sides of the same coin
@@ -93,8 +513,12 @@ Why can’t we just treat uncertainty as another variable?
     * In uncertainty visualisation, the opposite is true
     * This is the core of the signal suppression approach we implement
 
-## Topic 4:  Uncertainty representation in different types of problems
+# Uncertainty representation in different types of problems {.transition-slide}
+
+##
+
 *from the ggdibbler notes the conditional line plot. All the examples are from time series packages, because I spent a bit of time looking for the one that returned a distributional forecast so I could use it in an example*
+
 Common ways we express uncertainty in R and when you would see them out in the wild?
 - Distributional (vectorised distributions that are wrappers on the d, p, q, r functions) 
     - e.g. when you get it as output - fable, some Bayes stuff (e.g. posterior)
@@ -104,15 +528,39 @@ Common ways we express uncertainty in R and when you would see them out in the w
 - Bootstrapping (?)
 
 
-## Topic 5: Deciding which is the best design
-*notes taken from useR talk slides*
-Evaluation criteria - Uncertainty visualisation should…
+# Deciding which is the best design {.transition-slide}
+
+##
+
+<!-- *notes taken from useR talk slides* -->
+
+Evaluation criteria - Uncertainty visualisation should:
+
 1. Reinforce justified signals
 2. Hide signals that are just noise
 Similar logic to a hypothesis test (but not as binary, and without set thing you are checking for)
 
-*notes taken from useR talk slides*
+<!-- *notes taken from useR talk slides*-->
+
 Accessibility considerations
+
 - Colour
     - 2D palette is harder to read as colour is not a simple 3D space. Mapping a variable to saturation hurts accessibility.
 (Maybe specifically mention this in section 2?. I am not sure of other accessibility issues other than colour issues (and maybe size?).
+
+## Miscellaneous
+
+- bag plot
+- model only (regression, wages example) vs adding data
+- ggdist
+- tidyindex
+- animation over space
+
+## Where to learn more
+
+- Spiegelhalter, D. (2017), [Risk and uncertainty communication](https://www.annualreviews.org/docserver/fulltext/statistics/4/1/annurev-statistics-010814-020148.pdf)
+
+## End of session 1 {.center}
+
+<a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.
+

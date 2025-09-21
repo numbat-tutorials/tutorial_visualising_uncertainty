@@ -1,10 +1,12 @@
 /*-- scss:defaults --*/
-
-@import url(https://fonts.googleapis.com/css?family=News+Cycle:400,700);
-@import url(https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic);
+@import url(https://fonts.googleapis.com/css?family=Actor);
+@import url(https://fonts.googleapis.com/css?family=Droid+Serif);
+@import url(https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
+@import url(https://fonts.googleapis.com/css?family=Source+Code+Pro:400,500,600);
+@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css");
 
 // fonts
-$font-family-sans-serif: Lato, sans-serif !default;
+$font-family-sans-serif: Actor, sans-serif !default;
 
 // colors
 $body-bg: #fff !default;
@@ -13,7 +15,7 @@ $link-color: #00008b !default;
 $selection-bg: rgba(0, 0, 0, 0.99);
 
 // headings
-$presentation-heading-font: "News Cycle", sans-serif !default;
+$presentation-heading-font: 'Yanone Kaffeesatz', sans-serif !default;
 
 // title slide
 $presentation-title-slide-text-align: left !default;
@@ -44,7 +46,7 @@ $presentation-title-slide-text-align: left !default;
   .quarto-title-authors {
     display: flex;
     justify-content: left;
-  
+
     .quarto-title-author {
       padding-left: 0em;
       padding-right: 0em;

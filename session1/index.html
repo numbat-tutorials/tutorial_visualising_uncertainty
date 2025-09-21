@@ -6,10 +6,11 @@
 <script src="index_files/libs/quarto-html/tippy.umd.min.js"></script>
 <link href="index_files/libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="index_files/libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="index_files/libs/quarto-html/quarto-syntax-highlighting-de070a7b0ab54f8780927367ac907214.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+<link href="index_files/libs/quarto-html/quarto-syntax-highlighting-1456680686c67bd47a766edffe5b8ea0.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
   <meta name="generator" content="quarto-1.7.30">
 
-  <title>Session 1: Introduction to incorporate uncertainty into data visualisations</title>
+  <meta name="author" content="Harriet Mason, Dianne Cook">
+  <title>Visualising Uncertainty</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
@@ -27,9 +28,73 @@
       margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
       vertical-align: middle;
     }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
   </style>
-  <link rel="stylesheet" href="index_files/libs/revealjs/dist/theme/quarto-3c6f79543fc62542a7c949a737a5b3ae.css">
-  <link rel="stylesheet" href="style/custom.css">
+  <link rel="stylesheet" href="index_files/libs/revealjs/dist/theme/quarto-c9ec9e6fda3b25e3d706a8b8e904666c.css">
   <link href="index_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="index_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="index_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -126,26 +191,472 @@
   <div class="reveal">
     <div class="slides">
 
-<section id="title-slide" data-background-image="_extensions/numbats/monash/images/bg-10.png" data-background-position="justify" data-background-size="contain" class="quarto-title-block center">
-<div id="title-slide-text">
-
-  <h1 class="title">Session 1: Introduction to incorporate uncertainty into data visualisations</h1>
+<section id="title-slide" data-background-color="#006dae" data-background-opacity="0.5" class="quarto-title-block center">
+  <h1 class="title">Visualising Uncertainty</h1>
 
 <div class="quarto-title-authors">
+<div class="quarto-title-author">
+<div class="quarto-title-author-name">
+Harriet Mason, Dianne Cook 
 </div>
-
-
+        <p class="quarto-title-affiliation">
+            Department of Econometrics and Business Statistics
+          </p>
+    </div>
 </div>
 
 </section>
-<section id="introduction" class="title-slide slide level1 center">
+<section id="welcome" class="slide level2">
+<h2>Welcome 👋🏼</h2>
+<div class="columns">
+<div class="column" style="width:45%;">
+<p>Thanks for joining to learn about making data plots today.</p>
+<div style="font-size: 80%;">
+<p>🦘 <strong><a href="https://www.dicook.org">Di</a></strong> is a <em>Professor of Statistics</em>. She has more than 30 years of research and teaching of data visualisation, and open source software development. <br> 🐨 <strong><a href="https://harrietmason.netlify.app/">Harriet</a></strong> is a <em>final year PhD student</em>, working on better representation of uncertainty in data visualisations, particularly focused on spatial data. <br></p>
+<p><em>We are both in Econometrics and Business Statistics, at Monash University.</em></p>
+</div>
+</div><div class="column" style="width:5%;">
+
+</div><div class="column" style="width:45%;">
+<div class="fragment">
+<p>🧩 Feel free to ask questions any time. 🤔</p>
+<div style="font-size: 80%;">
+<p><br></p>
+<p>🎯 The objectives for today are:</p>
+<ol type="1">
+<li></li>
+<li></li>
+<li></li>
+</ol>
+<p>Caution: Incorporating uncertainty into plots is far from state of best practices. This is our best attempt to summarise current literature, what we find to be valuable approaches and available tools.</p>
+</div>
+</div>
+</div></div>
+</section>
+<section id="session-1---foundations-of-uncertainty-in-data-visualisations" class="title-slide slide level1 center">
+<h1>Session 1 - Foundations of uncertainty in data visualisations</h1>
+
+</section>
+
+<section>
+<section id="introduction" class="title-slide slide level1 transition-slide center-align center">
 <h1>Introduction</h1>
 
 </section>
+<section id="what-is-uncertainty" class="slide level2">
+<h2>What is uncertainty?</h2>
+<div class="columns">
+<div class="column" style="width:20%;">
+<p><br><br> <em>You don’t know what you don’t know</em></p>
+</div><div class="column" style="width:60%;">
+<ul>
+<li class="fragment">Statistical (aleatory) uncertainty
+<ul>
+<li class="fragment">notion of randomness</li>
+<li class="fragment">variability in the outcome/measurements</li>
+</ul></li>
+<li class="fragment">Systemic (epistemic) uncertainty
+<ul>
+<li class="fragment">due to bias, misunderstanding, assumptions</li>
+<li class="fragment">measurement error</li>
+<li class="fragment">handling of missing information, and pre-processing choices</li>
+<li class="fragment">model choices</li>
+<li class="fragment">incorrect comparisons</li>
+<li class="fragment"><em>can you think of any others?</em></li>
+</ul></li>
+</ul>
+</div><div class="column" style="width:20%;">
+<div class="fragment">
+<div class="callout callout-important callout-style-simple">
+<div class="callout-body">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-content">
+<div class="large">
+<p>Mostly we are concerned about representing statistical uncertainty.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div></div>
+</section></section>
+<section>
+<section id="common-measures-and-representations" class="title-slide slide level1 transition-slide center-align center">
+<h1>Common measures and representations</h1>
+
+</section>
+<section id="show-the-data-14" class="slide level2">
+<h2>1. Show the data <span class="f50">(1/4)</span></h2>
+<div class="columns">
+<div class="column">
+<div class="callout callout-note callout-style-simple">
+<div class="callout-body">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-content">
+<p>The most valuable way to show uncertainty is to show all the data.</p>
+</div>
+</div>
+</div>
+<p>Plot shows first preference % for greens in the 2019 Australian Federal Election, for the 150 electorates.</p>
+<p>Plot of choice is the <strong>jittered dotplot</strong>, where points are spread vertically according to density.</p>
+</div><div class="column">
+<div style="font-size: 70%;">
+<div class="cell" data-layout-align="center">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="" aria-hidden="true" tabindex="-1"></a>election <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"session1/data/election2019.csv"</span>),</span>
+<span id="cb1-2"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="at">skip =</span> <span class="dv">1</span>,</span>
+<span id="cb1-3"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="at">col_types =</span> <span class="fu">cols</span>(</span>
+<span id="cb1-4"><a href="" aria-hidden="true" tabindex="-1"></a>    <span class="at">.default =</span> <span class="fu">col_character</span>(),</span>
+<span id="cb1-5"><a href="" aria-hidden="true" tabindex="-1"></a>    <span class="at">OrdinaryVotes =</span> <span class="fu">col_double</span>(),</span>
+<span id="cb1-6"><a href="" aria-hidden="true" tabindex="-1"></a>    <span class="at">AbsentVotes =</span> <span class="fu">col_double</span>(),</span>
+<span id="cb1-7"><a href="" aria-hidden="true" tabindex="-1"></a>    <span class="at">ProvisionalVotes =</span> <span class="fu">col_double</span>(),</span>
+<span id="cb1-8"><a href="" aria-hidden="true" tabindex="-1"></a>    <span class="at">PrePollVotes =</span> <span class="fu">col_double</span>(),</span>
+<span id="cb1-9"><a href="" aria-hidden="true" tabindex="-1"></a>    <span class="at">PostalVotes =</span> <span class="fu">col_double</span>(),</span>
+<span id="cb1-10"><a href="" aria-hidden="true" tabindex="-1"></a>    <span class="at">TotalVotes =</span> <span class="fu">col_double</span>(),</span>
+<span id="cb1-11"><a href="" aria-hidden="true" tabindex="-1"></a>    <span class="at">Swing =</span> <span class="fu">col_double</span>()</span>
+<span id="cb1-12"><a href="" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb1-13"><a href="" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-14"><a href="" aria-hidden="true" tabindex="-1"></a>e_grn <span class="ot">&lt;-</span> election <span class="sc">|&gt;</span></span>
+<span id="cb1-15"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(DivisionID) <span class="sc">|&gt;</span></span>
+<span id="cb1-16"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb1-17"><a href="" aria-hidden="true" tabindex="-1"></a>    <span class="at">DivisionNm =</span> <span class="fu">unique</span>(DivisionNm),</span>
+<span id="cb1-18"><a href="" aria-hidden="true" tabindex="-1"></a>    <span class="at">State =</span> <span class="fu">unique</span>(StateAb),</span>
+<span id="cb1-19"><a href="" aria-hidden="true" tabindex="-1"></a>    <span class="at">votes_GRN =</span> TotalVotes[<span class="fu">which</span>(PartyAb <span class="sc">==</span> <span class="st">"GRN"</span>)],</span>
+<span id="cb1-20"><a href="" aria-hidden="true" tabindex="-1"></a>    <span class="at">votes_total =</span> <span class="fu">sum</span>(TotalVotes)</span>
+<span id="cb1-21"><a href="" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb1-22"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">perc_GRN =</span> votes_GRN <span class="sc">/</span> votes_total <span class="sc">*</span> <span class="dv">100</span>)</span>
+<span id="cb1-23"><a href="" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-24"><a href="" aria-hidden="true" tabindex="-1"></a>e_grn <span class="sc">|&gt;</span></span>
+<span id="cb1-25"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">State =</span> <span class="fu">fct_reorder</span>(State, perc_GRN)) <span class="sc">|&gt;</span></span>
+<span id="cb1-26"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>perc_GRN, <span class="at">y=</span>State)) <span class="sc">+</span></span>
+<span id="cb1-27"><a href="" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_quasirandom</span>(<span class="at">groupOnX =</span> <span class="cn">FALSE</span>, <span class="at">varwidth =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb1-28"><a href="" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(</span>
+<span id="cb1-29"><a href="" aria-hidden="true" tabindex="-1"></a>      <span class="at">x =</span> <span class="st">"First preference votes %"</span>,</span>
+<span id="cb1-30"><a href="" aria-hidden="true" tabindex="-1"></a>      <span class="at">y =</span> <span class="st">""</span></span>
+<span id="cb1-31"><a href="" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb1-32"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlim</span>(<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">50</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="index_files/figure-revealjs/election1-1.png" class="quarto-figure quarto-figure-center" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div></div>
+</section>
+<section id="show-the-data-24" class="slide level2">
+<h2>1. Show the data <span class="f50">(2/4)</span></h2>
+<div class="columns">
+<div class="column">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="index_files/figure-revealjs/election1-1.png" class="quarto-figure quarto-figure-center" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</div><div class="column">
+<p>What do we learn?</p>
+<ul>
+<li class="fragment">Different number of observations in each state</li>
+<li class="fragment">One outlier in Vic</li>
+<li class="fragment">As a group, ACT has higher %’s</li>
+<li class="fragment">Vic has a small cluster of points with higher %’s</li>
+<li class="fragment">%’s are mostly very low</li>
+</ul>
+<div class="fragment">
+<p>This plot ONLY shows uncertainty!</p>
+</div>
+</div></div>
+</section>
+<section id="show-the-data-34" class="slide level2">
+<h2>1. Show the data <span class="f50">(3/4)</span></h2>
+<div class="columns">
+<div class="column">
+<p>What would be other common ways to display this data?</p>
+<ul>
+<li class="fragment">Side-by-side boxplots</li>
+<li class="fragment">Side-by-side violin</li>
+<li class="fragment">On a map of electorates</li>
+</ul>
+<div class="fragment">
+<p>For each plot think about</p>
+<ul>
+<li>what is uncertainty, and what is estimate</li>
+<li>what the plot shows or hides</li>
+</ul>
+</div>
+</div><div class="column">
+<div class="panel-tabset">
+<ul id="tabset-1" class="panel-tabset-tabby"><li><a data-tabby-default="" href="#tabset-1-1">Dotplot</a></li><li><a href="#tabset-1-2">Boxplot</a></li><li><a href="#tabset-1-3">Violin</a></li><li><a href="#tabset-1-4">Map</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1">
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="index_files/figure-revealjs/election1-1.png" class="quarto-figure quarto-figure-center" style="width:80.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-1-2">
+<div style="font-size: 70%;">
+<div class="cell" data-layout-align="center">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="" aria-hidden="true" tabindex="-1"></a>e_grn <span class="sc">|&gt;</span></span>
+<span id="cb2-2"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">State =</span> <span class="fu">fct_reorder</span>(State, perc_GRN)) <span class="sc">|&gt;</span></span>
+<span id="cb2-3"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>perc_GRN, <span class="at">y=</span>State)) <span class="sc">+</span></span>
+<span id="cb2-4"><a href="" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_boxplot</span>(<span class="at">varwidth =</span> <span class="cn">TRUE</span>) <span class="sc">+</span></span>
+<span id="cb2-5"><a href="" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(</span>
+<span id="cb2-6"><a href="" aria-hidden="true" tabindex="-1"></a>      <span class="at">x =</span> <span class="st">"First preference votes %"</span>,</span>
+<span id="cb2-7"><a href="" aria-hidden="true" tabindex="-1"></a>      <span class="at">y =</span> <span class="st">""</span></span>
+<span id="cb2-8"><a href="" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb2-9"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlim</span>(<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">50</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="index_files/figure-revealjs/election2-1.png" class="quarto-figure quarto-figure-center" style="width:80.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-1-3">
+<div style="font-size: 70%;">
+<div class="cell" data-layout-align="center">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="" aria-hidden="true" tabindex="-1"></a>e_grn <span class="sc">|&gt;</span></span>
+<span id="cb3-2"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">State =</span> <span class="fu">fct_reorder</span>(State, perc_GRN)) <span class="sc">|&gt;</span></span>
+<span id="cb3-3"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>perc_GRN, <span class="at">y=</span>State)) <span class="sc">+</span></span>
+<span id="cb3-4"><a href="" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_violin</span>(<span class="at">draw_quantiles =</span> <span class="fu">c</span>(<span class="fl">0.25</span>, <span class="fl">0.5</span>, <span class="fl">0.75</span>),</span>
+<span id="cb3-5"><a href="" aria-hidden="true" tabindex="-1"></a>      <span class="at">fill=</span><span class="st">"#006dae"</span>, <span class="at">alpha=</span><span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb3-6"><a href="" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(</span>
+<span id="cb3-7"><a href="" aria-hidden="true" tabindex="-1"></a>      <span class="at">x =</span> <span class="st">"First preference votes %"</span>,</span>
+<span id="cb3-8"><a href="" aria-hidden="true" tabindex="-1"></a>      <span class="at">y =</span> <span class="st">""</span></span>
+<span id="cb3-9"><a href="" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb3-10"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlim</span>(<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">50</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="index_files/figure-revealjs/election3-1.png" class="quarto-figure quarto-figure-center" style="width:80.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-1-4">
+<div style="font-size: 70%;">
+<div class="cell" data-layout-align="center">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="" aria-hidden="true" tabindex="-1"></a>oz_states <span class="ot">&lt;-</span> ozmaps<span class="sc">::</span>ozmap_states <span class="sc">%&gt;%</span> <span class="fu">filter</span>(NAME <span class="sc">!=</span> <span class="st">"Other Territories"</span>)</span>
+<span id="cb4-2"><a href="" aria-hidden="true" tabindex="-1"></a>oz_votes <span class="ot">&lt;-</span> rmapshaper<span class="sc">::</span><span class="fu">ms_simplify</span>(ozmaps<span class="sc">::</span>abs_ced)</span>
+<span id="cb4-3"><a href="" aria-hidden="true" tabindex="-1"></a>oz_votes_grn <span class="ot">&lt;-</span> <span class="fu">full_join</span>(oz_votes, e_grn, <span class="at">by=</span><span class="fu">c</span>(<span class="st">"NAME"</span><span class="ot">=</span><span class="st">"DivisionNm"</span>))</span>
+<span id="cb4-4"><a href="" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(oz_votes_grn, <span class="fu">aes</span>(<span class="at">fill=</span>perc_GRN)) <span class="sc">+</span></span>
+<span id="cb4-6"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">colour=</span><span class="st">"white"</span>) <span class="sc">+</span></span>
+<span id="cb4-7"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_viridis_c</span>(<span class="at">direction=</span><span class="sc">-</span><span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb4-8"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_map</span>() <span class="sc">+</span></span>
+<span id="cb4-9"><a href="" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"right"</span>, </span>
+<span id="cb4-10"><a href="" aria-hidden="true" tabindex="-1"></a>    <span class="at">legend.title =</span> <span class="fu">element_blank</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="index_files/figure-revealjs/election4-1.png" class="quarto-figure quarto-figure-center" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div></div>
+</section>
+<section id="show-the-data-44" class="slide level2">
+<h2>1. Show the data <span class="f50">(4/4)</span></h2>
+<div class="columns">
+<div class="column">
+<div class="callout callout-note callout-style-simple">
+<div class="callout-body">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-content">
+<p>Even when you think you are showing the data, it is often an estimate and some representation of uncertainty.</p>
+</div>
+</div>
+</div>
+<p><br><br></p>
+<p>The election data is actually estimates. The electorates are strata, so what was shown was % computed on each strata.</p>
+<p>What is the full data? What are different strata possible?</p>
+<div class="fragment">
+<p>Generally, we trust the values provided by AEC, and we explore the distribution of votes by different strata in the electorate structure. The goal being to understand the variability in the way the people have voted, identify electorates where the winner might flip next time, …</p>
+</div>
+</div><div class="column">
+<div class="fragment">
+<p><br><br> <br><br> <br><br> <br><br> <br><br></p>
+<div class="blockquote">
+<p>It’s really difficult to concretely define uncertainty!</p>
+</div>
+</div>
+</div></div>
+</section>
+<section id="terminology" class="slide level2">
+<h2>Terminology</h2>
+<div class="columns">
+<div class="column">
+<p>Names for main thing:</p>
+<ul>
+<li>estimate</li>
+<li>statistic</li>
+<li>signal</li>
+</ul>
+<p>Names for uncertainty, needed to understand main thing:</p>
+<ul>
+<li>variation</li>
+<li>variability</li>
+<li>variance</li>
+<li>standard deviation</li>
+<li>error</li>
+<li>IQR</li>
+<li>MAD</li>
+<li>noise</li>
+</ul>
+</div><div class="column" style="width:25%;">
+<div class="callout callout-important callout-style-simple">
+<div class="callout-body">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-content">
+<p>Displaying uncertainty is often considered to be <strong>signal suppression</strong>.</p>
+</div>
+</div>
+</div>
+</div></div>
+</section>
+<section id="why-signal-suppression-14" class="slide level2">
+<h2>Why “signal suppression”? <span class="f50">(1/4)</span></h2>
+<p>Regression</p>
+<!-- 
+Examples of this: regression line but no data. 
+-->
+</section>
+<section id="why-signal-suppression-24" class="slide level2">
+<h2>Why “signal suppression”? <span class="f50">(2/4)</span></h2>
+<p>Longitudinal data</p>
+</section>
+<section id="why-signal-suppression-34" class="slide level2">
+<h2>Why “signal suppression”? <span class="f50">(3/4)</span></h2>
+<p>Forecasts</p>
+</section>
+<section id="why-signal-suppression-44" class="slide level2">
+<h2>Why “signal suppression”? <span class="f50">(4/4)</span></h2>
+<p>Map</p>
+<!-- example data sets: melbourne temperature, australias election -->
+</section>
+<section id="section" class="slide level2">
+<h2></h2>
+<!-- *I have sometimes had a bit of confusion about when to plot uncertainty vs original when talking to people, so I added a slide for the in useR talk that mentioned when you have a situation where you need to do an uncertainty visualisation rather than just showing the data. It seemed to make it a bit clearer for the audience. The slide basically said:*-->
+<!--
+- Original data can show
+    - small sample sizes, high variability, missing values, other failed assumptions
+- However, original data is not always…
+    - Available
+        - anonymised data, data is combined from multiple sources,  theoretical values, etc
+    - Relevant
+        - Sampling distribution, distribution of model parameters, etc
+    - Deterministic
+        - data with measurement error, bounded data, etc
+-->
+</section></section>
+<section>
+<section id="how-this-affects-perception" class="title-slide slide level1 transition-slide center">
+<h1>How this affects perception</h1>
+
+</section>
+<section id="section-1" class="slide level2">
+<h2></h2>
+<!-- *notes taken from useR talk slides*-->
+<p>Why can’t we just treat uncertainty as another variable? * Uncertainty is not just another variable… * It presents an interesting perceptual problem * Two sides of the same coin * Usually do not want variables to interfere with each other * In uncertainty visualisation, the opposite is true * This is the core of the signal suppression approach we implement</p>
+</section></section>
+<section>
+<section id="uncertainty-representation-in-different-types-of-problems" class="title-slide slide level1 transition-slide center">
+<h1>Uncertainty representation in different types of problems</h1>
+
+</section>
+<section id="section-2" class="slide level2">
+<h2></h2>
+<p><em>from the ggdibbler notes the conditional line plot. All the examples are from time series packages, because I spent a bit of time looking for the one that returned a distributional forecast so I could use it in an example</em></p>
+<p>Common ways we express uncertainty in R and when you would see them out in the wild? - Distributional (vectorised distributions that are wrappers on the d, p, q, r functions) - e.g.&nbsp;when you get it as output - fable, some Bayes stuff (e.g.&nbsp;posterior) - Base R (d, p, q, r functions) - Confidence intervals - hi low variables in the forecast packages - Bootstrapping (?)</p>
+</section></section>
+<section>
+<section id="deciding-which-is-the-best-design" class="title-slide slide level1 transition-slide center">
+<h1>Deciding which is the best design</h1>
+
+</section>
+<section id="section-3" class="slide level2">
+<h2></h2>
+<!-- *notes taken from useR talk slides* -->
+<p>Evaluation criteria - Uncertainty visualisation should:</p>
+<ol type="1">
+<li>Reinforce justified signals</li>
+<li>Hide signals that are just noise Similar logic to a hypothesis test (but not as binary, and without set thing you are checking for)</li>
+</ol>
+<!-- *notes taken from useR talk slides*-->
+<p>Accessibility considerations</p>
+<ul>
+<li>Colour
+<ul>
+<li>2D palette is harder to read as colour is not a simple 3D space. Mapping a variable to saturation hurts accessibility. (Maybe specifically mention this in section 2?. I am not sure of other accessibility issues other than colour issues (and maybe size?).</li>
+</ul></li>
+</ul>
+</section>
+<section id="miscellaneous" class="slide level2">
+<h2>Miscellaneous</h2>
+<ul>
+<li>bag plot</li>
+<li>model only (regression, wages example) vs adding data</li>
+<li>ggdist</li>
+<li>tidyindex</li>
+<li>animation over space</li>
+</ul>
+</section>
+<section id="where-to-learn-more" class="slide level2">
+<h2>Where to learn more</h2>
+<ul>
+<li>Spiegelhalter, D. (2017), <a href="https://www.annualreviews.org/docserver/fulltext/statistics/4/1/annurev-statistics-010814-020148.pdf">Risk and uncertainty communication</a></li>
+</ul>
+</section>
+<section id="end-of-session-1" class="slide level2 center">
+<h2>End of session 1</h2>
+<p><a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png"></a><br>This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.</p>
+
+</section></section>
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
 <div class="footer footer-default">
-<p>[Visualising uncertainty]</p>
+<p><a href="https://numbat-tutorials.github.io/tutorial_visualising_uncertainty/">https://numbat-tutorials.github.io/tutorial_visualising_uncertainty/</a></p>
 </div>
 </div></div>
 
@@ -323,9 +834,9 @@
         // The "normal" size of the presentation, aspect ratio will be preserved
         // when the presentation is scaled to fit different resolutions. Can be
         // specified using percentage units.
-        width: 1280,
+        width: 1600,
 
-        height: 750,
+        height: 900,
 
         // Factor of the display size that should remain empty around the content
         margin: 0.1,
@@ -357,142 +868,6 @@
         ]
       });
     </script>
-    <script>
-    // Copy over background colors to new div
-    divs = document.querySelectorAll('[data-background-color]');
-
-    Array.from(divs).map(function (x) {
-      const color = x.dataset.backgroundColor;
-
-      var new_div = document.createElement('div');
-      new_div.setAttribute("class", "background-color-div");
-      new_div.style.backgroundColor = color;
-      x.appendChild(new_div);
-      x.removeAttribute("data-background-color");
-    })
-
-    // Remove background colors from backgrounds div
-    Array.from(
-      document.querySelectorAll("[data-background-hash]")
-    ).map(function (x) {
-      x.removeAttribute("data-background-hash");
-      x.style.backgroundColor = null;
-    })
-    </script>
-
-    <script>
-    // Copy over background images to new div
-    divs = document.querySelectorAll('[data-background-image]');
-
-    Array.from(divs).map(function (x) {
-      var new_div = document.createElement('div');
-      new_div.setAttribute("class", "background-image-div");
-
-      if (x.dataset.backgroundImage != undefined) {
-        new_div.style.backgroundImage = "url(" + x.dataset.backgroundImage + ")";
-        x.removeAttribute("data-background-image");
-      }
-      if (x.dataset.backgroundSize != undefined) {
-        new_div.style.backgroundSize = x.dataset.backgroundSize;
-        x.removeAttribute("data-background-size");
-      }
-      if (x.dataset.backgroundPosition != undefined) {
-        new_div.style.backgroundPosition = x.dataset.backgroundPosition;
-        x.removeAttribute("data-background-position");
-      }
-      if (x.dataset.backgroundRepeat != undefined) {
-        new_div.style.backgroundRepeat = x.dataset.backgroundRepeat;
-        x.removeAttribute("data-background-repeat");
-      }
-      if (x.dataset.backgroundOpacity != undefined) {
-        new_div.style.backgroundOpacity = x.dataset.backgroundOpacity;
-        x.removeAttribute("data-background-opacity");
-      }
-
-      x.appendChild(new_div);
-    })
-    </script>
-
-    <script>
-    // Copy over background vidoes
-
-    // Run once when we load
-    var video_div = document.querySelectorAll(".backgrounds video");
-    var slide_div = document.querySelectorAll("[data-background-video]");
-
-    for (let i = 0; i < video_div.length; i++) {
-      video_div[i].setAttribute("class", "background-video-div");
-
-      slide_div[i].appendChild(video_div[i]);
-      slide_div[i].removeAttribute("data-background-video");
-    }
-
-    Reveal.getCurrentSlide().querySelectorAll("video").forEach(x => x.play());
-
-    // Each time we advance slides, as the background videos aren't loaded
-    // unless they are a few slides away
-    Reveal.on('slidechanged', event => {
-      var video_div = document.querySelectorAll(".backgrounds video");
-      var slide_div = document.querySelectorAll("[data-background-video]");
-
-      for (let i = 0; i < video_div.length; i++) {
-        video_div[i].setAttribute("class", "background-video-div");
-
-        slide_div[i].appendChild(video_div[i]);
-        slide_div[i].removeAttribute("data-background-video");
-      }
-
-      Reveal.getCurrentSlide().querySelectorAll("video").forEach(x => x.play());
-    });
-    </script>
-
-    <script>
-    // Copy over background vidoes
-
-    // Run once when we load
-    var iframe_div = document.querySelectorAll(".backgrounds iframe");
-    var slide_div = document.querySelectorAll("[data-background-iframe]");
-
-    for (let i = 0; i < iframe_div.length; i++) {
-      iframe_div[i].setAttribute("class", "background-iframe-div");
-
-      slide_div[i].appendChild(iframe_div[i]);
-      slide_div[i].removeAttribute("data-background-iframe");
-    }
-
-    // Each time we advance slides, as the background videos aren't loaded
-    // unless they are a few slides away
-    Reveal.on('slidechanged', event => {
-      var iframe_div = document.querySelectorAll(".backgrounds iframe");
-      var slide_div = document.querySelectorAll("[data-background-iframe]");
-
-      for (let i = 0; i < iframe_div.length; i++) {
-        iframe_div[i].setAttribute("class", "background-iframe-div");
-
-        slide_div[i].appendChild(iframe_div[i]);
-        slide_div[i].removeAttribute("data-background-iframe");
-      }
-    });
-    </script>
-
-    <script>
-    // Clean up slide background styles
-    divs = document.querySelectorAll('.slide-background-content');
-    Array.from(divs).map(function (x) {
-      x.style = null;
-    })
-    </script>
-
-    <script>
-    // Move menu button
-    menu_div = document.querySelector(".slide-menu-button");
-    document.querySelector(".slides").appendChild(menu_div);
-
-    // Move progress bar
-    menu_div = document.querySelector(".progress");
-    document.querySelector(".slides").appendChild(menu_div);
-    </script>
-
     
     <script>
       // htmlwidgets need to know to resize themselves when slides are shown/hidden.
