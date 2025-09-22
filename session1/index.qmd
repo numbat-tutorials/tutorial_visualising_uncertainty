@@ -1,5 +1,6 @@
 ---
-title: "Visualising Uncertainty"
+title: "WOMBAT 2025 Tutorial"
+subtitle: "Visualising Uncertainty"
 author: 
   - name: "Harriet Mason, Dianne Cook"
 institute: "Department of Econometrics and Business Statistics"
@@ -12,6 +13,7 @@ format:
     height: 900
     margin: 0.1
     slide-number: c/t
+    embed-resources: true
 code-line-numbers: false
 code-fold: true
 message: false
@@ -133,9 +135,9 @@ Caution: Incorporating uncertainty into plots is far from  state of best practic
 ::::
 
 
-# Session 1 - Foundations of uncertainty in data visualisations
+# Session 1 <br> Foundations of uncertainty in data visualisations {.transition-slide .center-align}
 
-# Introduction {.transition-slide .center-align}
+# Introduction {.transition-slide style="align: center;"}
 
 ## What is uncertainty?
 
