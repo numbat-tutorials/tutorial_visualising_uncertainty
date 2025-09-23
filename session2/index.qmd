@@ -18,6 +18,8 @@ title-slide-attributes:
 template-partials:
   - style/title-slide.html 
 footer: "[Visualising uncertainty]"
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r}
@@ -64,16 +66,110 @@ options(
 
 # Topic 1: Hands-on spatial example -  getting data with quantified uncertainty
 
+## Data we will be working with
+
+```{r, Download ALA data}
+#| eval: false
+# Get possom and magpie data
+# Animal Data (or ALA)
+library(galah)
+
+# Set up with email
+galah_config(email = "harriet.mason1@monash.edu")
+
+# Common Brushtail Possum - Trichosurus vulpecula
+# Common Ringtail Possum - Pseudocheirus peregrinus
+# Australian Magpie - Gymnorhina tibicen
+# Magpie-Lark - Grallina cyanoleuca
+animal_names <- c("Gymnorhina tibicen", "Grallina cyanoleuca",
+                  "Trichosurus vulpecula", "Pseudocheirus peregrinus")
+
+
+# Download ALA data
+ala_data <- galah_call() |>
+  identify(animal_names) |>
+  filter(year >= 2024) |>
+  select(group = "basic") |>
+  collect()
+save(ala_data, file="session2/data/ala_data.rda")
+```
+
+```{r, Clean AlA data}
+# load ALA data
+load("session2/data/ala_data.rda")
+
+# func: name change 1
+sci_to_common <- function(x){
+  # x is a single string value
+  scientific_names <- c("Trichosurus vulpecula", 
+                        "Pseudocheirus peregrinus", 
+                        "Gymnorhina tibicen", 
+                        "Grallina cyanoleuca")
+  common_names <- c("Common Brushtail Possum", 
+                    "Common Ringtail Possum", 
+                    "Australian Magpie", 
+                    "Magpie-Lark")
+  common_names[which(stringr::str_detect(x, scientific_names))]
+}
+
+# made another function for class
+sci_to_type <- function(x){
+  # x is a single string value
+  scientific_names <- c("Trichosurus vulpecula", 
+                        "Pseudocheirus peregrinus", 
+                        "Gymnorhina tibicen", 
+                        "Grallina cyanoleuca")
+  common_names <- c("Possum", "Possum", "Magpie", "Magpie")
+  common_names[which(stringr::str_detect(x, scientific_names))]
+}
+
+test <- unique(ala_data$scientificName)
+single_test <- test[sample(seq_len(20), 1)]
+sci_to_common(single_test)
+
+# Add common names and type
+ala_data$commonName <- sapply(ala_data$scientificName, sci_to_common)
+ala_data$animalType <- sapply(ala_data$scientificName, sci_to_type)
+
+# just grab some of the variables
+ala_tidy <- ala_data |>
+  select(commonName, animalType, decimalLatitude, decimalLongitude, eventDate)
+```
+
+```{r}
+# check data
+library(ggplot2)
+ggplot(data=ala_tidy) +
+  geom_point(aes(x=decimalLongitude, y=decimalLatitude, colour=animalType), alpha=0.1)
+
+```
+
+```{r}
+# Get postcode data
+postcodes <- strayr::read_absmap("postcode2021")
+```
 ## General structure of spatial data
 - General structure of spatial data and basic data cleaning 
+- Point
+- Area
+- Line
+  
+  
+## Previously mentioned uncertainty in map contexts
+- Assumption violations
+- Missing data
+  - animals need to be seen by people
+    - locations with people
+    - size of animal
+    - time of day
+- Measurement error
+  - I know ALA round their data to stop people from finding endangered animals
+    - Sugar gliders are pets in america (so weird) which I found out from a random podcast
+      - I don't think they are the australian variety though
 
-## Sources of uncertainty in spatial cases
-- e.g. data summarised for a specific region
-- also have usual stuff like estimated values from a spatial model.
-    
-
-## Data we will be working with
-*TODO - Find data*
+## Additional sources of uncertainty in spatial cases
+- Aggregation
+  - e.g. data summarised for a specific region
 
 ## Going from data to quantified uncertainty
 - Methods to arrive at quantified uncertainty
