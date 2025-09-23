@@ -37,6 +37,9 @@ library(colorspace)
 library(patchwork)
 library(broom)
 library(ggbeeswarm)
+library(ggforce)
+library(ggdist)
+library(ggridges)
 library(ggmosaic)
 library(nullabor)
 library(ozmaps)
@@ -61,7 +64,8 @@ knitr::opts_chunk$set(
   fig.align = "center",
   dev.args = list(bg = 'transparent'),
   out.width = "100%",
-  fig.retina = 3,
+  fig.retina = 5,
+  dpi = 300, 
   echo = TRUE,
   warning = FALSE,
   message = FALSE,
@@ -71,7 +75,7 @@ knitr::opts_chunk$set(
 
 ```{r, include = FALSE}
 #| label: theme-for-nice-plots
-theme_set(ggthemes::theme_gdocs(base_size = 14) +
+theme_set(ggthemes::theme_gdocs() + #base_size = 14) +
   theme(plot.background = 
         element_rect(fill = 'transparent', colour = NA),
         #axis.line.x = element_line(color = "black", 
@@ -80,8 +84,8 @@ theme_set(ggthemes::theme_gdocs(base_size = 14) +
         #                           linewidth = 0.4),
         panel.grid.major = element_line(color = "grey90"),
         axis.ticks = element_line(color = "black"),
-        plot.title.position = "plot",
-        plot.title = element_text(size = 14),
+        #plot.title.position = "plot",
+        #plot.title = element_text(size = 14),
         panel.background  = 
           element_rect(fill = 'transparent', colour = "black"),
         legend.background = 
@@ -469,22 +473,119 @@ Displaying uncertainty is described **signal suppression**.
 :::
 ::::
 
-## Example 1
+## Example: distributions
 
-Distributions
+```{r}
+#| eval: false
+#| echo: false
+melbtemp <- read_csv(here::here("session1/data/melb_temp.csv")) |>
+  janitor::clean_names() |>
+  dplyr::rename(temp = `maximum_temperature_degree_c`) |>
+  mutate(month = fct_recode(month, 
+                            "Jan"="01",
+                            "Feb"="02",
+                            "Mar"="03",
+                            "Apr"="04",
+                            "May"="05",
+                            "Jun"="06",
+                            "Jul"="07",
+                            "Aug"="08",
+                            "Sep"="09",
+                            "Oct"="10",
+                            "Nov"="11",
+                            "Dec"="12")) |>
+  mutate(day = as.numeric(day)) |>
+  filter(year > 1972, year < 2020) |>
+  dplyr::select(year, month, day, temp)
+save(melbtemp, file="session1/data/melbtemp.rda")
+```
 
-## Example 2
+::: {.panel-tabset}
 
-Confidence intervals
+## Variations in plot choices
 
-## Example 3
+::: {style="font-size: 70%;"}
 
-Forecasts
+```{r}
+#| label: distributions
+#| fig-width: 18
+#| fig-height: 8
+#| out-width: 80%
+load("data/melbtemp.rda")
+melbtemp_2019 <- melbtemp |>
+  filter(year == 2019)
+  
+d1 <- ggplot(melbtemp_2019, aes(x=month, y=temp)) +
+  geom_quasirandom() + 
+  stat_summary(geom="point", fun="median", 
+    colour="red", size=3) +
+  xlab("") + ylab("Temp (C)") +
+  ggtitle("A. ggbeeswarm::geom_quasirandom")
+  
+library(ggforce)
+d2 <- ggplot(melbtemp_2019, aes(x=month, y=temp)) +
+  geom_violin(fill = "#6F7C4D", colour=NA, alpha=0.7) +
+  geom_sina() +
+  xlab("") + ylab("Temp (C)") +
+  ggtitle("B. geom_violin + ggforce::geom_sina")
+
+library(ggridges)
+d3 <- ggplot(melbtemp_2019, aes(x=temp, y=month)) +
+  geom_density_ridges(scale = 1.5, 
+                      quantile_lines = TRUE,
+                      quantiles = 2,
+                      fill = "#6F7C4D") +
+  xlab("Temp (C)") + ylab("") + 
+  theme_ridges() +
+  ggtitle("C. ggridges::geom_density_ridges")
+
+library(ggdist)
+d4 <- ggplot(melbtemp_2019, aes(x=temp, y=month)) +
+  stat_halfeye(fill="#6F7C4D", alpha=0.7) +
+  geom_point(pch = "|", size = 2,
+    position = position_nudge(y = -.15)) +
+  xlab("Temp (C)") + ylab("") +
+  ggtitle("D. ggdist::stat_halfeye")
+
+lout <- c(area(1,2),
+          area(3),
+          area(4))
+lout <- "
+AACD
+BBCD
+"
+d1 + d2 + d3 + d4 + plot_layout(design=lout)
+```
+
+:::
+
+## Consider this
+
+- What is the main element?
+- How is the uncertainty displayed?
+- What is the uncertainty pattern? And then, what would be an appropriate representation?
+- What are the key features of the data that we need to preserve in a plot?
+- Why the different aspect ratios?
+
+<!-- Distributions: density-jittered dotplot (ggbeeswarm, ggforce::geom_sina, geom_violin, ggridges)
+-->
+
+:::
 
 ## Your turn
 
-Play with different ggdist options
+1. Decide on the appropriate information about the variability that needs to be included in the display.
+2. Play with different options on your choice of display to make various displays. Aim to have three different designs.
+3. Is there a winner, or several roughly equally good displays?
 
+```{r}
+#| echo: false
+countdown::countdown(10, left="50%", bottom="40%",
+  color_background="#027EB6",
+  color_text="white",
+  color_running_background="#027EB6",
+  color_finished_background="#D93F00")
+```
 
 # How this affects perception {.transition-slide}
 
@@ -509,20 +610,7 @@ Forecasts
 Map
 
 
-```{r}
-#| eval: false
-#| echo: false
-melbtemp <- read_csv(here::here("session1/data/melb_temp.csv")) |>
-  janitor::clean_names() |>
-  rename(temp = maximum_temperature_degree_c) |>
-  filter(!is.na(temp)) |>
-  dplyr::select(year, month, day, temp)
 
-ggplot(melbtemp, aes(x=month, y=temp)) +
-  geom_quasirandom(alpha=0.1)
-
-```
-<!-- example data sets: melbourne temperature, australias election -->
 
 ##
 
