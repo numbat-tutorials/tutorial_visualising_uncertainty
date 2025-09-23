@@ -62,9 +62,30 @@ options(
 )
 ```
 
-# Topic 1 - Unique challenges of visualising map data
+# Topic 1: Hands-on spatial example -  getting data with quantified uncertainty
 
-- Why such a focus on spatial visualisations?
+## General structure of spatial data
+- General structure of spatial data and basic data cleaning 
+
+## Sources of uncertainty in spatial cases
+- e.g. data summarised for a specific region
+- also have usual stuff like estimated values from a spatial model.
+    
+
+## Data we will be working with
+*TODO - Find data*
+
+## Going from data to quantified uncertainty
+- Methods to arrive at quantified uncertainty
+    - Bootstrapping
+    - Theoretical distribution (assumed normal?)
+
+## Spatial data with an uncertainty component
+
+
+# Topic 2 - Unique challenges of visualising map data
+
+## Why such a focus on spatial visualisations?
 
 Spatial case is a good example to work through because the aesthetics we have to express estimates are limited-
 - Variables that are…
@@ -81,26 +102,27 @@ Spatial case is a good example to work through because the aesthetics we have to
     - grid layout
     - glyph maps
 
+## Goal of a spatial visualisation
 
-# Topic 2: Hands-on spatial example -  getting data with quantified uncertainty
+## Typical spatial visualisations
 
-- General structure of spatial data and basic data cleaning 
-- Sources of uncertainty in spatial cases
-    - e.g. data summarised for a specific region
-    - also have usual stuff like estimated values from a spatial model.
-- Methods to arrive at quantified uncertainty
-    - Bootstrapping
-    - Theoretical distribution (assumed normal?)
-
+## Existing approaches for spatial visualisation
 
 ## Topic 3: Methods for visualising uncertainty in maps 
 
 Go through some popular packages. Show what format the data needs to be in. Show how to make plots using this data format. 
 
+## Popular packages for visualising uncertainty in maps
 Different packages require different input and cleaning processes
 - Vizumap: distribution as a q function
 - ggdibbler: distribution from distributional
 - biscale: estimate and standard error as two variables
+
+## Input and cleaning processes for uncertain data
+
+## Translating between different data types
+
+## Creating maps with uncertain data
 
 Spatial cases
 - Choropleth map
