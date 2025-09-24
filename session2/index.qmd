@@ -11,6 +11,7 @@ format:
     width: 1280
     height: 750
     slide-number: c/t
+    embed-resources: true
 title-slide-attributes: 
   data-background-image: "_extensions/numbats/monash/images/bg-10.png"
   data-background-size: contain
@@ -64,7 +65,16 @@ options(
 )
 ```
 
-# Topic 1: Hands-on spatial example -  getting data with quantified uncertainty
+## Session 2 Overview
+1. Hands-on spatial example
+  - Discuss motivating example for data set
+2. Unique challenges of visualising map data
+3. Methods for visualising uncertainty in maps
+
+
+# Hands-on spatial example <br> Going from data to quantified uncertainty
+
+## My Dog Bosco
 
 ## Data we will be working with
 
@@ -123,9 +133,6 @@ sci_to_type <- function(x){
   common_names[which(stringr::str_detect(x, scientific_names))]
 }
 
-test <- unique(ala_data$scientificName)
-single_test <- test[sample(seq_len(20), 1)]
-sci_to_common(single_test)
 
 # Add common names and type
 ala_data$commonName <- sapply(ala_data$scientificName, sci_to_common)
