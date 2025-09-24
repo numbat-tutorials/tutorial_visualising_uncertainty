@@ -65,7 +65,7 @@ knitr::opts_chunk$set(
   dev.args = list(bg = 'transparent'),
   out.width = "100%",
   fig.retina = 5,
-  dpi = 300, 
+  dpi = 150, 
   echo = TRUE,
   warning = FALSE,
   message = FALSE,
