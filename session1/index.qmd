@@ -1243,34 +1243,53 @@ forecast plots, and ask what is the version of uncertainty applied
 
 # Deciding which is the best design {.transition-slide}
 
-##
+## Evaluation criteria
 
+:::: {.columns}
+::: {.column}
 <!-- *notes taken from useR talk slides* -->
 
-Evaluation criteria - Uncertainty visualisation should:
+Uncertainty visualisation should:
 
-1. Reinforce justified signals
-2. Hide signals that are just noise
-Similar logic to a hypothesis test (but not as binary, and without set thing you are checking for)
+1. Reinforce signal that are important
+2. Hide signal that are primarily noise
+
+to enable making the better decisions and conclusions, or dare we say, inference.
+
+:::
+::: {.column}
+
+<!-- Similar logic to a hypothesis test (but not as binary, and without set thing you are checking for)-->
 
 <!-- *notes taken from useR talk slides*-->
 
-Accessibility considerations
+::: {.fragment}
 
-- Colour
-    - 2D palette is harder to read as colour is not a simple 3D space. Mapping a variable to saturation hurts accessibility.
-(Maybe specifically mention this in section 2?. I am not sure of other accessibility issues other than colour issues (and maybe size?).
+Accessibility considerations are harder, because there is more information provided, e.g.
 
+- What is the focus? line, or the confidence bands?
+- Does the uncertainty representation obscure the signal?
+- Reading colour is already hard. For spatial plots where a 2D palette is used for signal and uncertainty is hard to read. Mapping a variable to saturation hurts accessibility. *Stay tuned for session 2!*
+
+:::
+
+:::
+::::
+
+<!-- 
 ## Miscellaneous
 
 - bag plot
 - ggdist
 - tidyindex
 - animation over space
+-->
 
 ## Where to learn more
 
 - Kay, M. [ggdist: Visualizations of distributions and uncertainty ](https://mjskay.github.io/ggdist/index.html)
+- Hofmann, Follett, Majumder, Cook 2012 [Graphical Tests for Power Comparison of Competing Designs](https://ieeexplore.ieee.org/document/6327249)
+- [nullabor package](https://dicook.github.io/nullabor/)
 - Spiegelhalter, D. (2017), [Risk and uncertainty communication](https://www.annualreviews.org/docserver/fulltext/statistics/4/1/annurev-statistics-010814-020148.pdf)
 
 ## End of session 1 {.center}
