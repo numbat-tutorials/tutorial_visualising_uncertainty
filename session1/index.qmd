@@ -131,9 +131,10 @@ Thanks for joining to learn about making data plots today.
 
 🎯 The objectives for today are:
 
-1. 
-2. 
-3. 
+1. understand what uncertainty means, in particular in relation to data visualisation.
+2. be able to plot different types of uncertainty. 
+3. assess whether one representation may be better than another.
+4. apply these principles to spatial data visualisations.
 
 Caution: Incorporating uncertainty into plots is far from  state of best practices. This is our best attempt to summarise current literature, what we find to be valuable approaches and available tools.
 
@@ -941,12 +942,31 @@ c1 + c2 + c3 + plot_layout(ncol=1)
 
 ## Applying these to making plots
 
-- Map primary information to pre-attentive elements like colour
-- Place items to compare first near each other
-- When using colour to map a two-ended continuous variable use a diverging palette, and conversely, for low-high continuous variable usa a sequential palette
-- Axes and labels should be faint in the background, to be examined only when needing to interpret or quantify patterns
-- Order items, categories by a numerical rank
-- For separate plots, common axes to make comparison easier
+:::: {.columns}
+::: {.column width=60%}
+
+- Make primary information prominent: use pre-attentive elements like colour, make larger.
+- Place items to compare first near each other, main thing + uncertainty.
+- When using colour to map a two-ended continuous variable use a diverging palette, and conversely, for low-high continuous variable such as confidence use a sequential palette.
+- Axes and labels should be faint in the background, to be examined only when needing to interpret or quantify patterns.
+- Order items, categories by a numerical rank.
+- For separate plots, common axes to make comparison easier.
+
+:::
+::: {.column width=40%}
+::: {.fragment style="font-size: 80%;"}
+
+<br><br><br>
+
+Accessibility considerations when adding uncertainty to plots are harder because there is more information provided.
+
+- What is the focus? line, or the confidence bands?
+- Does the uncertainty representation obscure the signal?
+- Reading colour is already hard. For spatial plots where a 2D palette is used for signal and uncertainty is hard to read. Mapping a variable to saturation hurts accessibility. *Stay tuned for session 2!*
+
+:::
+:::
+::::
 
 ## Application to uncertainty visualisation
 
@@ -955,7 +975,7 @@ c1 + c2 + c3 + plot_layout(ncol=1)
 
 1. Make the main thing pre-attentive. It will draw attention to it first. 
 2. Map the uncertainty to a lower level of attentiveness.
-3. Uncertainty needs to be placed with the main thing in order to make comparison
+3. Uncertainty needs to be placed with the main thing in order to make comparison.
 
 :::
 ::: {.column width=30%}
@@ -1128,9 +1148,9 @@ ped_sc_ci <- ped_sc |>
   pivot_wider(names_from = bound, values_from = value)
 b6 <- ggplot(ped_sc_ci, aes(x=Time, y=Count)) +
   geom_lineribbon(aes(ymin = l, ymax = u, fill = prob)) +
-  xlab("Hour") +
+  labs(x="Hour", fill="Confidence") +
   scale_fill_discrete_sequential(palette = "Greens", 
-    rev=FALSE, n=5)
+    rev=FALSE, n=5)  
 b7 <- ggplot(ped_sc, aes(x=Time, y=Count)) +
   geom_smooth(colour = "#20794D", fill = "#b9ca4a") +
   geom_point(colour = "#20794D") +
@@ -1233,7 +1253,12 @@ b7
 
 ## Broader applicability
 
-These same approaches apply to many other types of displays.
+The approaches used on the barcharts here are the same approaches that apply to many other types of displays.
+
+- Error bars
+- Error bands
+- Gradients
+- Multiple samples, such as bootstrap or simulation (not shown here)
 
 ## Exercise 3
 
@@ -1251,8 +1276,8 @@ forecast plots, and ask what is the version of uncertainty applied
 
 Uncertainty visualisation should:
 
-1. Reinforce signal that are important
-2. Hide signal that are primarily noise
+1. Reinforce signals that are important
+2. Hide signals that are primarily noise
 
 to enable making the better decisions and conclusions, or dare we say, inference.
 
@@ -1263,18 +1288,23 @@ to enable making the better decisions and conclusions, or dare we say, inference
 
 <!-- *notes taken from useR talk slides*-->
 
+Objective testing procedure:
+
+- Simulate data to control pattern being examined.
+- Use the lineup protocol to determine is a reader can detect the structured plot from not structured null plots.
+
+<br><br>
+
 ::: {.fragment}
 
-Accessibility considerations are harder, because there is more information provided, e.g.
-
-- What is the focus? line, or the confidence bands?
-- Does the uncertainty representation obscure the signal?
-- Reading colour is already hard. For spatial plots where a 2D palette is used for signal and uncertainty is hard to read. Mapping a variable to saturation hurts accessibility. *Stay tuned for session 2!*
+*We'll illustrate this with a simplified pedestrian count plot example.*
 
 :::
 
 :::
 ::::
+
+
 
 <!-- 
 ## Miscellaneous
@@ -1284,6 +1314,158 @@ Accessibility considerations are harder, because there is more information provi
 - tidyindex
 - animation over space
 -->
+
+## Try this 
+
+```{r}
+#| echo: false
+# Variable names don't matter because these 
+# need to be removed from any plots
+nlev <- 8
+x <- 1:nlev
+y_large <- 2 + (x-nlev/2)^2
+y_large <- max(y_large) - y_large
+y_small <- y_large
+#y_small[5] <- y_small[5] + 5
+#y_small[6] <- y_small[6] - 5
+#y_small[7] <- y_small[7] - 6
+struct_d <- tibble(x, y=y_small)
+#ggplot(struct_d, aes(x=x, y=y)) + geom_point()
+#set.seed(118)
+#noise1 <- tibble(x=x, y=rpois(nlev, 10))
+#ggplot(noise1, aes(x=x, y=y)) + geom_point()
+#struct_d_n <- struct_d + noise1
+#ggplot(struct_d_n, aes(x=x, y=y)) + geom_point()
+# Generate 11 nulls + data
+set.seed(130)
+noise_param <- 1
+noise_scale <- 30
+m <- 12 # multiple of 3
+noise1 <- tibble(x=rep(x, m), 
+                 y=rpois(nlev*m, noise_param)+1, 
+                 .sample=rep(1:m, rep(nlev, m))
+)
+set.seed(258)
+pos <- sample(1:m, 1)
+noise1_lup <- noise1 |>
+  mutate(yn = y*noise_scale) |>
+  mutate(y = if_else(.sample == pos, struct_d$y+y, y)) |>
+  group_by(.sample) |>
+  mutate(y = round((y-min(y))/(max(y)-min(y))*90+10, 0))
+l1 <- ggplot(noise1_lup, aes(x=x, y=y,
+    ymin = y-yn, ymax = y+yn)) + 
+  geom_ribbon(colour=NA, fill="#b9ca4a") +
+  geom_line(colour="#20794D") +
+  facet_wrap(~.sample, ncol=m/3, scales="free_y") +
+  theme(axis.text = element_blank(),
+        axis.title = element_blank(),
+        axis.ticks = element_blank(),
+        panel.grid.major = element_blank(),
+        aspect.ratio = 0.6)
+l2 <- ggplot(noise1_lup, aes(x=x, y=y,
+         ymin = y-yn, ymax = y+yn)) +
+  geom_pointrange(colour = "#20794D") +
+  geom_point(colour="#b9ca4a", size=3) +
+  facet_wrap(~.sample, ncol=m/3, scales="free_y") +
+  theme(axis.text = element_blank(),
+        axis.title = element_blank(),
+        axis.ticks = element_blank(),
+        panel.grid.major = element_blank(),
+        aspect.ratio = 0.6)
+noise_scale <- 10
+set.seed(432)
+pos <- sample(1:m, 1)
+noise1_lup <- noise1 |>
+  mutate(yn = y*noise_scale) |>
+  mutate(y = if_else(.sample == pos, struct_d$y+y, y)) |>
+  group_by(.sample) |>
+  mutate(y = round((y-min(y))/(max(y)-min(y))*90+10, 0))
+l3 <- ggplot(noise1_lup, aes(x=x, y=y,
+    ymin = y-yn, ymax = y+yn)) + 
+  geom_ribbon(colour=NA, fill="#b9ca4a") +
+  geom_line(colour="#20794D") +
+  facet_wrap(~.sample, ncol=m/3, scales="free_y") +
+  theme(axis.text = element_blank(),
+        axis.title = element_blank(),
+        axis.ticks = element_blank(),
+        panel.grid.major = element_blank(),
+        aspect.ratio = 0.6)
+l4 <- ggplot(noise1_lup, aes(x=x, y=y,
+         ymin = y-yn, ymax = y+yn)) +
+  geom_pointrange(colour = "#20794D") +
+  geom_point(colour="#b9ca4a", size=3) +
+  facet_wrap(~.sample, ncol=m/3, scales="free_y") +
+  theme(axis.text = element_blank(),
+        axis.title = element_blank(),
+        axis.ticks = element_blank(),
+        panel.grid.major = element_blank(),
+        aspect.ratio = 0.6)
+
+```
+
+::: {.panel-tabset}
+
+## start
+
+we are going to evaluate these plots 
+
+## 1a
+
+```{r}
+#| echo: false
+#| fig-width: 10
+#| fig-height: 8
+#| out-width: 50%
+l1
+```
+
+## 1b
+
+```{r}
+#| echo: false
+#| fig-width: 10
+#| fig-height: 8
+#| out-width: 50%
+l2
+```
+
+## 2a
+
+```{r}
+#| echo: false
+#| fig-width: 10
+#| fig-height: 8
+#| out-width: 50%
+l4
+```
+
+## 2b
+
+```{r}
+#| echo: false
+#| fig-width: 10
+#| fig-height: 8
+#| out-width: 50%
+l3
+```
+:::
+
+
+## Simulated data setup
+
+:::: {.columns}
+::: {.column}
+- **Time**: 8 instead of 24
+- **Count**: pattern is large wave
+- **Variance model**: uniform ranging from small to large. Poisson used to generate count. 
+:::
+::: {.column}
+
+
+
+:::
+::::
+
 
 ## Where to learn more
 
