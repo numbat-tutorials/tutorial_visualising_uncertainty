@@ -65,6 +65,9 @@ options(
 )
 ```
 
+```{r}
+library(tidyverse)
+```
 ## Session 2 Overview
 1. Hands-on spatial example
   - Discuss motivating example for data set
@@ -74,7 +77,90 @@ options(
 
 # Hands-on spatial example <br> Going from data to quantified uncertainty
 
+## Recently I had to move
+![](images/img4.jpg)
+## Which meant thinking about where I want to live
+![](images/img5.jpg)
+
+## Suburb spatial data
+```{r}
+#| eval: false
+
+# Get postcode data
+suburbs <- strayr::read_absmap("suburb2021")
+
+# Select just 10 or so around me
+nearby_suburbs <- c("South Yarra",
+                    "South Melbourne", 
+                    "Toorak",
+                    "Melbourne", 
+                    "Richmond", 
+                    "Prahran",
+                    "Windsor",
+                    "Middle Park",
+                    "Albert Park",
+                    "Cremorne",
+                    "Burnley",
+                    "Southbank")
+
+# clean data to just local suburbs
+my_suburbs <- suburbs |> 
+  filter(state_name_2021 == "Victoria") |>
+  mutate(suburb_name_2021 = str_remove(suburb_name_2021, " \\(Vic.\\)")) |>
+  filter(suburb_name_2021 %in% nearby_suburbs) |>
+  mutate(plot_long = cent_long,
+         plot_lat = cent_lat)
+
+# EDIT SOME SUBURB LABELS
+# Melbourne
+my_suburbs$plot_lat[4] <- my_suburbs$plot_lat[4] + 0.01
+my_suburbs$plot_long[4] <- my_suburbs$plot_long[4] - 0.005
+# Prahan
+my_suburbs$plot_lat[6] <- my_suburbs$plot_lat[6] + 0.001
+# Albert Park
+my_suburbs$plot_lat[1] <- my_suburbs$plot_lat[1] + 0.001
+my_suburbs$plot_long[1] <- my_suburbs$plot_long[1] - 0.008
+# South Melbourne
+my_suburbs$plot_long[8] <- my_suburbs$plot_long[8] + 0.001
+
+save(my_suburbs, file="session2/data/my_suburbs.rda")
+
+```
+
+```{r}
+# load ALA data
+load("session2/data/my_suburbs.rda")
+
+# Suburb plot
+my_suburbs |>
+  ggplot() +
+  geom_sf(aes(fill=suburb_name_2021), alpha=0.7) +
+  theme_minimal() +
+  geom_text(aes(y=plot_lat, x=plot_long, label = suburb_name_2021), size=1.2) +
+  scale_fill_brewer(palette = "Set3") +
+  xlab("Longitude") + ylab("Latitude") +
+  theme(legend.position = "none")
+```
+
+Spatial data has...
+- Three components
+  - 
+- Three possible formats
+  - Point
+  - Area
+  - Line
+
+## But someone else's needs are more important
+![](images/img6.jpg)
+
 ## My Dog Bosco
+![](images/img1.jpg)
+## Bosco's Hobbies
+![](images/img2.jpg)
+
+## Bosco's #1 Hobby
+![](images/img3.jpg)
+
 
 ## Data we will be working with
 
@@ -85,83 +171,106 @@ options(
 library(galah)
 
 # Set up with email
-galah_config(email = "harriet.mason1@monash.edu")
+galah_config(email = "harriet.mason1@monash.edu",
+             password = "ds8AKy&zEtYNO4",
+             atlas = "Australia")
 
 # Common Brushtail Possum - Trichosurus vulpecula
 # Common Ringtail Possum - Pseudocheirus peregrinus
 # Australian Magpie - Gymnorhina tibicen
 # Magpie-Lark - Grallina cyanoleuca
-animal_names <- c("Gymnorhina tibicen", "Grallina cyanoleuca",
-                  "Trichosurus vulpecula", "Pseudocheirus peregrinus")
-
+scientific_names <- c("Trichosurus vulpecula", "Pseudocheirus peregrinus")
+common_names <- c("Common Brushtail Possum", "Common Ringtail Possum")
 
 # Download ALA data
 ala_data <- galah_call() |>
-  identify(animal_names) |>
-  filter(year >= 2024) |>
+  identify(scientific_names) |>
+  filter(year >= 2015) |>
   select(group = "basic") |>
   collect()
-save(ala_data, file="session2/data/ala_data.rda")
+
+ala_tidy <- ala_data |>
+  filter(str_starts(scientificName, "Trichosurus") | str_starts(scientificName, "Pseudocheirus"))|>
+  select(scientificName, decimalLatitude, decimalLongitude, eventDate)
+
+#save(ala_data, file="session2/data/ala_data.rda")
+
+# check number of files
+# just grab some of the variables
+check <- ala_tidy |>
+  filter(between(decimalLatitude, -37.86016, -37.79806),
+         between(decimalLongitude, 144.9408, 145.0327)) |>
+  st_as_sf(coords = c("decimalLongitude", "decimalLatitude"), crs = subs_crs)
+
+
+# check data over suburb data
+ggplot() +
+  geom_sf(data=my_suburbs) +
+  geom_sf(data = check)
 ```
 
 ```{r, Clean AlA data}
 # load ALA data
 load("session2/data/ala_data.rda")
 
-# func: name change 1
-sci_to_common <- function(x){
-  # x is a single string value
-  scientific_names <- c("Trichosurus vulpecula", 
-                        "Pseudocheirus peregrinus", 
-                        "Gymnorhina tibicen", 
-                        "Grallina cyanoleuca")
-  common_names <- c("Common Brushtail Possum", 
-                    "Common Ringtail Possum", 
-                    "Australian Magpie", 
-                    "Magpie-Lark")
-  common_names[which(stringr::str_detect(x, scientific_names))]
-}
-
-# made another function for class
-sci_to_type <- function(x){
-  # x is a single string value
-  scientific_names <- c("Trichosurus vulpecula", 
-                        "Pseudocheirus peregrinus", 
-                        "Gymnorhina tibicen", 
-                        "Grallina cyanoleuca")
-  common_names <- c("Possum", "Possum", "Magpie", "Magpie")
-  common_names[which(stringr::str_detect(x, scientific_names))]
-}
-
-
-# Add common names and type
-ala_data$commonName <- sapply(ala_data$scientificName, sci_to_common)
-ala_data$animalType <- sapply(ala_data$scientificName, sci_to_type)
+ggplot(data=ala_tidy) +
+  geom_point(aes(x=decimalLongitude, y=decimalLatitude), alpha=0.1)
 
 # just grab some of the variables
-ala_tidy <- ala_data |>
-  select(commonName, animalType, decimalLatitude, decimalLongitude, eventDate)
-```
+check <- ala_tidy |>
+  filter(between(decimalLatitude, -37.86016, -37.79806),
+         between(decimalLongitude, 144.9408, 145.0327)) |>
+  st_as_sf(coords = c("decimalLongitude", "decimalLatitude"), crs = subs_crs)
 
-```{r}
+
 # check data
-library(ggplot2)
-ggplot(data=ala_tidy) +
-  geom_point(aes(x=decimalLongitude, y=decimalLatitude, colour=animalType), alpha=0.1)
+ggplot() +
+  geom_sf(data=bosco_data) +
+  geom_sf(data = check)
+```
+
+
+```{r}
+# Combine suburb to possum data
+genLatitude <- runif(100,-37.86016, -37.79806) #noise
+genLongitude <-  runif(100, 144.9408, 145.0327) #noise
+
+# get suburb CRS
+subs_crs <- st_crs(my_suburbs)
+
+# Convert possum data to SF object
+point_data <- generated_point |>
+  st_as_sf(coords = c("decimalLongitude", "decimalLatitude"),
+             crs = subs_crs)
+
+# Combine suburb and possum data
+bosco_data <- st_join(my_suburbs, point_data) |>
+    na.omit()
 
 ```
 
 ```{r}
-# Get postcode data
-postcodes <- strayr::read_absmap("postcode2021")
+
 ```
-## General structure of spatial data
-- General structure of spatial data and basic data cleaning 
-- Point
-- Area
-- Line
-  
-  
+
+
+
+
+## Ways of plotting spatial data
+- Not uncommon for maps to warp the fixed elements, or get creative and add stuff 
+    - hex plots
+    - cartogram
+    - grid layout
+    - glyph maps
+
+## Popular packages for visualising uncertainty in maps
+Different packages require different input and cleaning processes
+- Vizumap: distribution as a q function
+- ggdibbler: distribution from distributional
+- biscale: estimate and standard error as two variables
+
+## Work through example with ggdibbler
+
 ## Previously mentioned uncertainty in map contexts
 - Assumption violations
 - Missing data
@@ -186,7 +295,6 @@ postcodes <- strayr::read_absmap("postcode2021")
 ## Spatial data with an uncertainty component
 
 
-# Topic 2 - Unique challenges of visualising map data
 
 ## Why such a focus on spatial visualisations?
 
@@ -199,11 +307,8 @@ Spatial case is a good example to work through because the aesthetics we have to
     - Variables (all kind of change the same thing)
         - colour / fill
         - alpha (transparency) - indistinguishble from changing the colour value tbh
-- Not uncommon for maps to warp the fixed elements, or get creative and add stuff 
-    - hex plots
-    - cartogram
-    - grid layout
-    - glyph maps
+
+
 
 ## Goal of a spatial visualisation
 
@@ -215,11 +320,6 @@ Spatial case is a good example to work through because the aesthetics we have to
 
 Go through some popular packages. Show what format the data needs to be in. Show how to make plots using this data format. 
 
-## Popular packages for visualising uncertainty in maps
-Different packages require different input and cleaning processes
-- Vizumap: distribution as a q function
-- ggdibbler: distribution from distributional
-- biscale: estimate and standard error as two variables
 
 ## Input and cleaning processes for uncertain data
 

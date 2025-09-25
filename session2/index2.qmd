@@ -1,0 +1,24 @@
+---
+title: "Session 2: Incorporating uncertainty into spatial data visualisations"
+author: 
+  - name: "Harriet Mason, Dianne Cook"
+institute: "Department of Econometrics and Business Statistics, Monash University, Australia."
+format: 
+  revealjs:
+    theme: [default, _extensions/EmilHvitfeldt/letterbox/letterbox.scss, _extensions/numbats/monash/assets/monash.scss, _extensions/mitchelloharawild/custom-callouts/resources/css/custom-callouts.scss]
+    css: [style/custom.css]
+    include-after-body: _extensions/EmilHvitfeldt/letterbox/theme.html
+    width: 1280
+    height: 750
+    slide-number: c/t
+    embed-resources: true
+title-slide-attributes: 
+  data-background-image: "_extensions/numbats/monash/images/bg-10.png"
+  data-background-size: contain
+  data-background-position: "justify"
+template-partials:
+  - style/title-slide.html 
+footer: "[Visualising uncertainty]"
+editor_options: 
+  chunk_output_type: console
+---
