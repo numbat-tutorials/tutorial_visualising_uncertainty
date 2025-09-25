@@ -25,7 +25,7 @@ footer: "[https://numbat-tutorials.github.io/tutorial_visualising_uncertainty/](
 ---
 
 ```{r, include = FALSE}
-#| label: libraries-for-participants
+#| label: libraries
 library(ggplot2)
 library(tidyr)
 library(dplyr)
@@ -45,6 +45,11 @@ library(nullabor)
 library(ozmaps)
 library(sf)
 library(rmapshaper)
+library(brolgar)
+library(lme4)
+library(modelr)
+library(distributional)
+library(lubridate)               
 library(ggthemes)
 library(conflicted)
 conflicts_prefer(dplyr::filter)
@@ -613,9 +618,6 @@ Plotting the fitted model alone
 #| fig-width: 6
 #| fig-height: 4
 #| out-width: 100%
-library(brolgar)
-library(lme4)
-library(modelr)
 data("wages")
 wages_fct <- wages |>
   select(id, ln_wages, xp, high_grade) |>
@@ -1013,7 +1015,10 @@ Take a look at the plots made in Exercise 1. Ask yourself whether the main thing
 Tinker with the design of one plot to make it better fit this principle.
 :::
 ::: {.column}
+
+::: {.fragment}
 Add solutions here
+:::
 
 :::
 ::::
@@ -1045,17 +1050,195 @@ and to emphasize "compared to what" -->
 
 # Uncertainty representation in different types of problems {.transition-slide}
 
-##
+## Barcharts
 
-*from the ggdibbler notes the conditional line plot. All the examples are from time series packages, because I spent a bit of time looking for the one that returned a distributional forecast so I could use it in an example*
+:::: {.columns}
+::: {.column width=15%}
 
-Common ways we express uncertainty in R and when you would see them out in the wild?
+::: {style="font-size: 70%;"}
+
+Melbourne pedestrian counts at Southern Cross Station, Sunday Aug 31, 2025.
+:::
+
+:::
+
+::: {.column width=85%}
+
+::: {.panel-tabset}
+
+```{r}
+#| eval: false
+#| echo: false
+ped <- rwalkr::melb_walk(from = as.Date("2025-08-01"), 
+                         to = as.Date("2025-08-31"))
+ped <- ped |>
+  mutate(wday = wday(Date, label=TRUE, 
+      abbr=TRUE, week_start=1)) |>
+  mutate(Count = as.numeric(Count))
+save(ped, file="data/ped_Aug2025.rda")
+```
+
+```{r}
+#| label: pedestrians
+#| echo: false
+load("data/ped_Aug2025.rda")
+ped_sc <- ped |>
+  filter(Sensor == "Southern Cross Station") |>
+  filter(Date == ymd("2025-08-31")) |>
+  group_by(Time) |>
+  summarise(Count = sum(Count), .groups = "drop") |>
+  mutate(se = sqrt(Count))
+b1 <- ggplot(ped_sc, aes(x=Time, y=Count)) +
+  geom_col(fill = "#20794D") +
+  xlab("Hour")
+b2 <- ggplot(ped_sc, aes(x=Time, y=Count)) +
+  geom_col(fill = "#b9ca4a") +
+  geom_errorbar(aes(ymin = Count - se, ymax = Count + se),
+    width=0.5, colour="#20794D") +
+  xlab("Hour")
+b3 <- ggplot(ped_sc, aes(x=Time,
+    ydist=distributional::dist_normal(Count, se))) +
+  stat_pointinterval(colour = "#20794D") +
+  xlab("Hour") + ylab("Count")
+b4 <- ggplot(ped_sc, aes(x=Time,
+    ydist=distributional::dist_normal(Count, se))) +
+  stat_gradientinterval(colour = NA, fill="#20794D", 
+    .width=1) +
+  geom_line(aes(x=Time, y=Count), colour="#20794D") +
+  xlab("Hour") + ylab("Count")
+b5 <- ggplot(ped_sc, aes(x=Time, y=Count)) +
+  geom_ribbon(aes(ymin = Count - qnorm(0.975)*se, 
+                  ymax = Count + qnorm(0.975)*se),
+    fill = "#b9ca4a") +
+  geom_line(colour="#20794D") +
+  xlab("Hour")
+ped_sc_ci <- ped_sc |>
+  mutate(l50 = Count - qnorm(0.75)*se,
+         u50 = Count + qnorm(0.75)*se,
+         l80 = Count - qnorm(0.9)*se,
+         u80 = Count + qnorm(0.9)*se,
+         l99 = Count - qnorm(0.995)*se,
+         u99 = Count + qnorm(0.995)*se
+  ) |>
+  pivot_longer(cols=l50:u99, names_to = "intprob", 
+    values_to="value") |>
+  mutate(bound = str_sub(intprob, 1, 1),
+       prob = str_sub(intprob, 2, 3)) |>
+  select(Time, Count, se, prob, bound, value) |>
+  pivot_wider(names_from = bound, values_from = value)
+b6 <- ggplot(ped_sc_ci, aes(x=Time, y=Count)) +
+  geom_lineribbon(aes(ymin = l, ymax = u, fill = prob)) +
+  xlab("Hour") +
+  scale_fill_discrete_sequential(palette = "Greens", 
+    rev=FALSE, n=5)
+b7 <- ggplot(ped_sc, aes(x=Time, y=Count)) +
+  geom_smooth(colour = "#20794D", fill = "#b9ca4a") +
+  geom_point(colour = "#20794D") +
+  xlab("Hour")
+```
+
+## [Bars]{.f80} 
+
+```{r}
+#| echo: false
+#| fig-width: 8
+#| fig-height: 5
+#| out-width: 70%
+b1
+```
+
+## [bar+CI]{.f80} 
+
+```{r}
+#| echo: false
+#| fig-width: 8
+#| fig-height: 5
+#| out-width: 70%
+b2
+```
+
+## [CI]{.f80} 
+
+```{r}
+#| echo: false
+#| fig-width: 8
+#| fig-height: 5
+#| out-width: 70%
+b3
+```
+
+## [Gradient]{.f80} 
+
+```{r}
+#| echo: false
+#| fig-width: 8
+#| fig-height: 5
+#| out-width: 70%
+b4
+```
+
+## [Ribbon]{.f80} 
+
+```{r}
+#| echo: false
+#| fig-width: 8
+#| fig-height: 5
+#| out-width: 70%
+b5
+```
+
+## [LineRibbon]{.f80} 
+
+```{r}
+#| echo: false
+#| fig-width: 9
+#| fig-height: 5
+#| out-width: 70%
+b6
+```
+
+## [Loess]{.f80} 
+
+```{r}
+#| echo: false
+#| fig-width: 8
+#| fig-height: 5
+#| out-width: 70%
+b7
+```
+
+## [Code]{.f80} 
+
+```{r}
+#| label: pedestrians
+#| echo: true
+#| eval: false
+```
+
+
+:::
+
+:::
+::::
+
+<!-- *from the ggdibbler notes the conditional line plot. All the examples are from time series packages, because I spent a bit of time looking for the one that returned a distributional forecast so I could use it in an example*-->
+
+<!-- Common ways we express uncertainty in R and when you would see them out in the wild?
 - Distributional (vectorised distributions that are wrappers on the d, p, q, r functions) 
     - e.g. when you get it as output - fable, some Bayes stuff (e.g. posterior)
 - Base R (d, p, q, r functions)
 - Confidence intervals
     - hi low variables in the forecast packages
-- Bootstrapping (?)
+- Bootstrapping (?)-->
+
+## Broader applicability
+
+These same approaches apply to many other types of displays.
+
+## Exercise 3
+
+forecast plots, and ask what is the version of uncertainty applied
+
 
 
 # Deciding which is the best design {.transition-slide}
@@ -1081,13 +1264,13 @@ Accessibility considerations
 ## Miscellaneous
 
 - bag plot
-- model only (regression, wages example) vs adding data
 - ggdist
 - tidyindex
 - animation over space
 
 ## Where to learn more
 
+- Kay, M. [ggdist: Visualizations of distributions and uncertainty ](https://mjskay.github.io/ggdist/index.html)
 - Spiegelhalter, D. (2017), [Risk and uncertainty communication](https://www.annualreviews.org/docserver/fulltext/statistics/4/1/annurev-statistics-010814-020148.pdf)
 
 ## End of session 1 {.center}
