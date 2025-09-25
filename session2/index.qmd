@@ -1,342 +1,453 @@
 ---
-title: "Session 2: Incorporating uncertainty into spatial data visualisations"
+title: "WOMBAT 2025 Tutorial"
+subtitle: "Visualising Uncertainty"
 author: 
   - name: "Harriet Mason, Dianne Cook"
-institute: "Department of Econometrics and Business Statistics, Monash University, Australia."
+institute: "Department of Econometrics and Business Statistics"
 format: 
   revealjs:
-    theme: [default, _extensions/EmilHvitfeldt/letterbox/letterbox.scss, _extensions/numbats/monash/assets/monash.scss, _extensions/mitchelloharawild/custom-callouts/resources/css/custom-callouts.scss]
-    css: [style/custom.css]
-    include-after-body: _extensions/EmilHvitfeldt/letterbox/theme.html
-    width: 1280
-    height: 750
+    theme: 
+      - default 
+      - custom.scss
+    width: 1600
+    height: 900
+    margin: 0.1
     slide-number: c/t
     embed-resources: true
-title-slide-attributes: 
-  data-background-image: "_extensions/numbats/monash/images/bg-10.png"
-  data-background-size: contain
-  data-background-position: "justify"
-template-partials:
-  - style/title-slide.html 
-footer: "[Visualising uncertainty]"
-editor_options: 
-  chunk_output_type: console
+code-line-numbers: false
+code-fold: true
+message: false
+highlight-style: pygments
+title-slide-attributes:
+  data-background-color: "#006dae"
+  data-background-opacity: "0.5"
+footer: "[https://numbat-tutorials.github.io/tutorial_visualising_uncertainty/](https://numbat-tutorials.github.io/tutorial_visualising_uncertainty/)"
 ---
 
 ```{r}
 #| label: setup
 #| include: false
-
-# set width of code output
-options(width = 65)
-
-# set plot defaults
-ggplot2::theme_set(ggplot2::theme_gray(base_size = 14))
-
-# set figure parameters for knitr
-# knitr::opts_chunk$set(
-#   out.width = "80%",
-#   fig.width = 8,        # 7" width
-#   fig.asp = 0.618,      # the golden ratio
-#   fig.retina = 3,       # dpi multiplier for displaying HTML output on retina
-#   fig.align = "center", # center align figures
-#   dpi = 300,             # higher dpi, sharper image
-#   code.line.numbers = FALSE,
-#   comment = " "
-# )
-
-knitr::opts_chunk$set(
-  fig.width = 5,
-  fig.height = 5,
-  fig.align = "center",
-  out.width = "100%",
-  code.line.numbers = FALSE,
-  fig.retina = 4,
-  echo = FALSE,
-  message = FALSE,
-  warning = FALSE,
-  cache = FALSE,
-  dev.args = list(pointsize = 11)
-)
-
-options(
-  dplyr.print_min = 6, 
-  dplyr.print_max = 6
-)
-```
-
-```{r}
 library(tidyverse)
-```
-## Session 2 Overview
-1. Hands-on spatial example
-  - Discuss motivating example for data set
-2. Unique challenges of visualising map data
-3. Methods for visualising uncertainty in maps
+library(ggdibbler)
+library(gt)
+library(distributional)
+library(cowplot)
+library(gridExtra)
+library(cartogram)
+library(sf)
+options(digits=3, 
+        repr.plot.width=15,
+        repr.plot.height=8)
 
-
-# Hands-on spatial example <br> Going from data to quantified uncertainty
-
-## Recently I had to move
-![](images/img4.jpg)
-## Which meant thinking about where I want to live
-![](images/img5.jpg)
-
-## Suburb spatial data
-```{r}
-#| eval: false
-
-# Get postcode data
-suburbs <- strayr::read_absmap("suburb2021")
-
-# Select just 10 or so around me
-nearby_suburbs <- c("South Yarra",
-                    "South Melbourne", 
-                    "Toorak",
-                    "Melbourne", 
-                    "Richmond", 
-                    "Prahran",
-                    "Windsor",
-                    "Middle Park",
-                    "Albert Park",
-                    "Cremorne",
-                    "Burnley",
-                    "Southbank")
-
-# clean data to just local suburbs
-my_suburbs <- suburbs |> 
-  filter(state_name_2021 == "Victoria") |>
-  mutate(suburb_name_2021 = str_remove(suburb_name_2021, " \\(Vic.\\)")) |>
-  filter(suburb_name_2021 %in% nearby_suburbs) |>
-  mutate(plot_long = cent_long,
-         plot_lat = cent_lat)
-
-# EDIT SOME SUBURB LABELS
-# Melbourne
-my_suburbs$plot_lat[4] <- my_suburbs$plot_lat[4] + 0.01
-my_suburbs$plot_long[4] <- my_suburbs$plot_long[4] - 0.005
-# Prahan
-my_suburbs$plot_lat[6] <- my_suburbs$plot_lat[6] + 0.001
-# Albert Park
-my_suburbs$plot_lat[1] <- my_suburbs$plot_lat[1] + 0.001
-my_suburbs$plot_long[1] <- my_suburbs$plot_long[1] - 0.008
-# South Melbourne
-my_suburbs$plot_long[8] <- my_suburbs$plot_long[8] + 0.001
-
-save(my_suburbs, file="session2/data/my_suburbs.rda")
-
+# ![](images/){fig-align="center"}
 ```
 
-```{r}
-# load ALA data
-load("session2/data/my_suburbs.rda")
+# Introduction to Spatial Visualisation
 
-# Suburb plot
-my_suburbs |>
-  ggplot() +
-  geom_sf(aes(fill=suburb_name_2021), alpha=0.7) +
+## Citizen Scientist Data  
+
+- There have been reports of a strange spatial pattern in the temperatures of Iowa
+- We get some citizen scientists to measure data at their home and report back
+- To maintain anonymity, we are only provided with the county of each scientist
+
+
+```{r}
+library(kableExtra)
+temp_data <- toy_temp |>
+  as_tibble() |>
+  select(scientistID, county_name,recorded_temp) |>
+  head(5)
+kbl(temp_data)
+```
+`990` citizen scientists participated
+
+
+## We could just plot the data...
+- We often get spatial data in terms of longitude and latitude which we can plot directly
+```{r}
+#| echo: false
+p_data <- ggplot(toy_temp) +
+  geom_jitter(aes(x=county_longitude, y=county_latitude, colour=recorded_temp), 
+              width=7000, height =7000, alpha=0.7) +
   theme_minimal() +
-  geom_text(aes(y=plot_lat, x=plot_long, label = suburb_name_2021), size=1.2) +
-  scale_fill_brewer(palette = "Set3") +
-  xlab("Longitude") + ylab("Latitude") +
-  theme(legend.position = "none")
+  labs(x = "Longitude",
+       y = "Latitude",
+       colour= "Temperature",
+       title = "Citizen Scientist Recordings") +
+  scale_colour_distiller(palette = "YlOrRd", direction= 1) +
+  theme(aspect.ratio=0.7)
+p_data
 ```
 
-Spatial data has...
-- Three components
-  - 
-- Three possible formats
-  - Point
-  - Area
-  - Line
+- This approach is easy but lacks the contextual information that gives our plots meaning.
 
-## But someone else's needs are more important
-![](images/img6.jpg)
+## Spatial features objects
 
-## My Dog Bosco
-![](images/img1.jpg)
-## Bosco's Hobbies
-![](images/img2.jpg)
+* SF objects are differentiated from a tibble because of additional metata in the Coordinate reference system (CRS). Specifically: 
+  + Assumptions about the shape of the planet (geodetic datum)
+  + Distortions we will/won't accept when drawing the map (map projection)
+  
+```{r}
+#| echo: false
+p_data_sf <- ggplot(toy_temp) +
+  geom_sf(aes(geometry=county_geometry), fill="white") +
+  geom_jitter(aes(x=county_longitude, y=county_latitude, colour=recorded_temp), 
+              width=7000, height =7000, alpha=0.7) +
+  theme_minimal() +
+  labs(x = "Longitude",
+       y = "Latitude",
+       colour= "Temperature",
+       title = "Citizen Scientist Recordings") +
+  scale_colour_distiller(palette = "YlOrRd", direction= 1) +
+  theme(aspect.ratio=0.7)
+p_data_sf
+```
 
-## Bosco's #1 Hobby
-![](images/img3.jpg)
+## Can you see the spatial trend?
+```{r}
+p_data_sf
+```
 
 
-## Data we will be working with
 
-```{r, Download ALA data}
+## Estimate the county mean
+- Visualising an estimate, such as a mean, can make trends easier to see
+  + Should use the sampling distribution, but often we do not bother...
+
+```{r}
+#| include: false
+# Calculate County Mean
+mean_print <- toy_temp |> 
+  group_by(county_name) |>
+  summarise(temp_mean = mean(recorded_temp),
+            temp_se = sd(recorded_temp)/sqrt(n()),
+            n = n()) |>
+  as_tibble() |>
+  select(county_name, temp_mean, temp_se, n) |>
+  head(5)
+
+toy_temp_mean <- toy_temp |> 
+  group_by(county_name, county_longitude, county_latitude) |>
+  summarise(temp_mean = mean(recorded_temp),
+            temp_se = sd(recorded_temp)/sqrt(n()),
+            n = n()) |>
+  ungroup()
+```
+
+```{r}
+#| echo: true
 #| eval: false
-# Get possom and magpie data
-# Animal Data (or ALA)
-library(galah)
-
-# Set up with email
-galah_config(email = "harriet.mason1@monash.edu",
-             password = "ds8AKy&zEtYNO4",
-             atlas = "Australia")
-
-# Common Brushtail Possum - Trichosurus vulpecula
-# Common Ringtail Possum - Pseudocheirus peregrinus
-# Australian Magpie - Gymnorhina tibicen
-# Magpie-Lark - Grallina cyanoleuca
-scientific_names <- c("Trichosurus vulpecula", "Pseudocheirus peregrinus")
-common_names <- c("Common Brushtail Possum", "Common Ringtail Possum")
-
-# Download ALA data
-ala_data <- galah_call() |>
-  identify(scientific_names) |>
-  filter(year >= 2015) |>
-  select(group = "basic") |>
-  collect()
-
-ala_tidy <- ala_data |>
-  filter(str_starts(scientificName, "Trichosurus") | str_starts(scientificName, "Pseudocheirus"))|>
-  select(scientificName, decimalLatitude, decimalLongitude, eventDate)
-
-#save(ala_data, file="session2/data/ala_data.rda")
-
-# check number of files
-# just grab some of the variables
-check <- ala_tidy |>
-  filter(between(decimalLatitude, -37.86016, -37.79806),
-         between(decimalLongitude, 144.9408, 145.0327)) |>
-  st_as_sf(coords = c("decimalLongitude", "decimalLatitude"), crs = subs_crs)
-
-
-# check data over suburb data
-ggplot() +
-  geom_sf(data=my_suburbs) +
-  geom_sf(data = check)
-```
-
-```{r, Clean AlA data}
-# load ALA data
-load("session2/data/ala_data.rda")
-
-ggplot(data=ala_tidy) +
-  geom_point(aes(x=decimalLongitude, y=decimalLatitude), alpha=0.1)
-
-# just grab some of the variables
-check <- ala_tidy |>
-  filter(between(decimalLatitude, -37.86016, -37.79806),
-         between(decimalLongitude, 144.9408, 145.0327)) |>
-  st_as_sf(coords = c("decimalLongitude", "decimalLatitude"), crs = subs_crs)
-
-
-# check data
-ggplot() +
-  geom_sf(data=bosco_data) +
-  geom_sf(data = check)
-```
-
-
-```{r}
-# Combine suburb to possum data
-genLatitude <- runif(100,-37.86016, -37.79806) #noise
-genLongitude <-  runif(100, 144.9408, 145.0327) #noise
-
-# get suburb CRS
-subs_crs <- st_crs(my_suburbs)
-
-# Convert possum data to SF object
-point_data <- generated_point |>
-  st_as_sf(coords = c("decimalLongitude", "decimalLatitude"),
-             crs = subs_crs)
-
-# Combine suburb and possum data
-bosco_data <- st_join(my_suburbs, point_data) |>
-    na.omit()
-
+# Calculate County Mean
+toy_temp |> 
+  group_by(county_name) |>
+  summarise(temp_mean = mean(recorded_temp),
+            temp_se = sd(recorded_temp)/sqrt(n()),
+            n = n()) 
 ```
 
 ```{r}
+kbl(mean_print)
+```
 
+## Can you see the trend now?
+
+```{r}
+p_choro <- ggplot(toy_temp_mean) +
+  geom_sf(aes(geometry=county_geometry, fill=temp_mean), linewidth = 0, alpha=0.9) +
+  theme_minimal() +
+  scale_fill_distiller(palette = "YlOrRd", direction= 1) +
+  xlab("Longitude") +
+  ylab("Latitude") +
+  labs(fill = "Temperature") +
+  theme(aspect.ratio=0.7)
+p_choro
+```
+
+## Common Map Visualisations
+
+:::: {.columns}
+
+::: {.column width="40%"}
+
+* Usually spatial data is shown using a choropleth map
+  + Choropleth maps shade an area according to an average or total
+* We can also weight according to a different variable (such as sample size)
+  + e.g. Cartograms, and Bubble plots
+
+:::
+
+::: {.column width="60%"}
+
+
+::: {.panel-tabset}
+
+## Choropleth Map
+
+```{r}
+p_choro
+```
+
+## Cartogram
+
+```{r}
+# Make Cartogram using instructions from r graph gallery
+toy_merc <- st_transform(toy_temp_mean, 3857)
+toy_cartogram <- cartogram_cont(toy_merc, weight = "n", itermax = 5)
+toy_cartogram <- st_transform(toy_cartogram, st_crs(toy_temp_mean))
+# plot it
+p_cartogram <- ggplot(toy_cartogram) +
+  geom_sf(aes(fill = temp_mean), linewidth = 0, alpha = 0.9) +
+  theme_minimal() +
+  scale_fill_distiller(palette = "YlOrRd", direction= 1) +
+  xlab("Longitude") +
+  ylab("Latitude") +
+  labs(fill = "Temperature") +
+  theme(aspect.ratio=0.7)
+p_cartogram
 ```
 
 
+## Bubble Map
+
+```{r}
+p_bubble <- ggplot(toy_temp_mean) +
+  geom_sf(fill = "white", alpha = 0.9) +
+  geom_point(aes(x=county_longitude, county_latitude,
+                 colour=temp_mean, size=n), alpha=0.9) +
+  theme_minimal() +
+  scale_fill_distiller(palette = "YlOrRd", direction= 1) +
+  xlab("Longitude") +
+  ylab("Latitude") +
+  labs(colour = "Temperature") +
+  scale_colour_distiller(palette = "YlOrRd", direction= 1) +
+  theme(aspect.ratio=0.7, legend.position="none")
+
+p_bubble
+
+```
+
+:::
+
+:::
+::::
+
+## But what if the error is worse? {.larger}
+:::: {.columns}
+
+::: {.column width=70%} 
+- It turns out the citizen scientists are using some pretty old tools
+- The standard error **could** be up to three times what we would estimate with our usual assumptions.
+- We want to see both versions of the data so we can see the impact of this measurement error
+
+```{r}
+#| include: false
+
+# Calculate extra variance
+toy_temp_comp <- toy_temp_mean |> 
+  mutate(low_temp_se = temp_se,
+         high_temp_se = 3*temp_se) |>
+  select(-temp_se)
+  
+comp_print <- toy_temp_comp |>
+  select(county_name, temp_mean, low_temp_se,
+         high_temp_se, n) |>
+  head(3)
+```
+
+```{r}
+kbl(comp_print)
+```
+:::
+
+::: {.column width=30%}
+![](images/thermo.jpeg){#fig-thermo width=100%}
+:::
+
+::::
+
+## Spot the difference
+:::: {.columns}
+
+::: {.column}
+
+```{r}
+#| fig-width: 10
+#| fig-height: 7
+#| out-width: 100%
+p_choro + ggtitle("Low Standard Error")
+```
+:::
+
+::: {.column}
+```{r}
+#| fig-width: 10
+#| fig-height: 7
+#| out-width: 100%
+p_choro + ggtitle("High Standard Error")
+```
+:::
+::::
+
+# Approaches to Spatial Uncertainty
+
+## Visualisation goals
+- We need to look at the data and identify:
+  - The spatial trend (does it exist or not)
+  - The statistical strength of the spatial trend
+  
+
+## Solution: add an axis for uncertainty
+![](images/bivar.jpeg){fig-align="center"}
+
+## Does this work? Not really
+- Pro
+  - Included uncertainty and increased transparency
+- Cons
+  - High uncertainty signal still very visible
+  - 2D palette is harder to read
+    - Colour is not a simple 3D space
+    - Using saturation hurts accessibility
+
+## Solution: blend the colours together!
+![](images/vsup.jpeg){fig-align="center"}
+
+## Does this work? Kind of... 
+
+- Pros
+  - Included uncertainty and increased transparency
+  - Removed false signals
+- Cons
+  - Still have 2D Colour palette 
+  - Standard error at which to blend colours is made up
+    - Blend at 1? 2? 4? 37?
+    - Impossible to align with hypothesis testing
+ 
+## Solution: simulate a sample
+
+![](images/choro.jpeg){fig-align="center"}
+
+## Does this work? Almost!
+- Pros
+  - Included uncertainty 
+  - High uncertainty interferes with reading of plot (?)
+  - 1D colour palette 
 
 
-## Ways of plotting spatial data
-- Not uncommon for maps to warp the fixed elements, or get creative and add stuff 
-    - hex plots
-    - cartogram
-    - grid layout
-    - glyph maps
+# Making a Pixel Map with `ggdibbler`
 
-## Popular packages for visualising uncertainty in maps
-Different packages require different input and cleaning processes
-- Vizumap: distribution as a q function
-- ggdibbler: distribution from distributional
-- biscale: estimate and standard error as two variables
+## Alternative software for incorperating uncertainty
+- Existing tidy data structures are not great for uncertain data
+- e.g. `Vizumap` 
+  - Makes Bivariate maps and Pixel (sample) maps
+  - Package is designed specifically for uncertainty
+- Issues
+  - `ggplot2` flexibility is lost
+    - e.g. you can only use one of three specific palettes
+  - *Very* computationally expensive
+    - A simple map can take over a minute to run
+  - Need to make every component separately then combine
 
-## Work through example with ggdibbler
+## `ggplot2` uses the grammar of graphics
 
-## Previously mentioned uncertainty in map contexts
-- Assumption violations
-- Missing data
-  - animals need to be seen by people
-    - locations with people
-    - size of animal
-    - time of day
-- Measurement error
-  - I know ALA round their data to stop people from finding endangered animals
-    - Sugar gliders are pets in america (so weird) which I found out from a random podcast
-      - I don't think they are the australian variety though
-
-## Additional sources of uncertainty in spatial cases
-- Aggregation
-  - e.g. data summarised for a specific region
-
-## Going from data to quantified uncertainty
-- Methods to arrive at quantified uncertainty
-    - Bootstrapping
-    - Theoretical distribution (assumed normal?)
-
-## Spatial data with an uncertainty component
+![](images/gog1.jpg){fig-align="center"}
 
 
+## It is designed to take in data
 
-## Why such a focus on spatial visualisations?
+![](images/gog3.jpg){fig-align="center"}
 
-Spatial case is a good example to work through because the aesthetics we have to express estimates are limited-
-- Variables that are…
-    - Fixed = 
-        - position
-        - size
-        - shape
-    - Variables (all kind of change the same thing)
-        - colour / fill
-        - alpha (transparency) - indistinguishble from changing the colour value tbh
+## Not theoretical distributions
 
+![](images/gog4.jpg){fig-align="center"}
 
+## This is what `ggdibbler` is for
 
-## Goal of a spatial visualisation
+![](images/gog5.jpg){fig-align="center"}
 
-## Typical spatial visualisations
+## Basic `ggdibbler` Example
 
-## Existing approaches for spatial visualisation
+```{r}
+#| echo: true
+#| fig-align: center 
 
-## Topic 3: Methods for visualising uncertainty in maps 
+library(ggdibbler)
+toy_temp_dist |> 
+  ggplot() + 
+  geom_sf_sample(aes(geometry = county_geometry,
+                     fill=temp_dist))
+```
 
-Go through some popular packages. Show what format the data needs to be in. Show how to make plots using this data format. 
+## Can utilise ggplot2 flexibility
 
+```{r}
+#| echo: true
+#| fig-align: center 
+ggplot(toy_temp_dist) +
+  geom_sf_sample(aes(geometry=county_geometry, fill=temp_dist),  linewidth=0, n=7) +
+  geom_sf(aes(geometry = county_geometry), fill=NA, linewidth=0.5, colour="white") +
+  theme_minimal() +
+  scale_fill_distiller(palette = "YlOrRd", direction= 1) +
+  xlab("Longitude") +
+  ylab("Latitude") +
+  labs(fill = "Temperature") +
+  ggtitle("A super cool and customised plot")
 
-## Input and cleaning processes for uncertain data
+```
 
-## Translating between different data types
+## Remember, the plot is random
 
-## Creating maps with uncertain data
+```{r}
+#| echo: true
+#| fig-align: center 
+ggplot(toy_temp_dist) +
+  geom_sf_sample(aes(geometry=county_geometry, fill=temp_dist),  linewidth=0, n=7) +
+  geom_sf(aes(geometry = county_geometry), fill=NA, linewidth=0.5, colour="white") +
+  theme_minimal() +
+  scale_fill_distiller(palette = "YlOrRd", direction= 1) +
+  xlab("Longitude") +
+  ylab("Latitude") +
+  labs(fill = "Temperature") +
+  ggtitle("A super cool and customised plot")
 
-Spatial cases
-- Choropleth map
-    - ggplot2
-- Bivar & VSUP
-    - kind of made up with no obvious way to align results with hypothesis testing
-    - 2D palette
-    - vizumap, biscale, ggdibbler
-- Pixel maps
-    - ggdibbler and vizumap methods
-- Glyph maps
-    - vizumap
+```
 
+## Exercise
+Here is the code that was used to make the cartogram from earlier in the session. Can you make a ggdibbler verion of this plot?
+```{r}
+#| echo: true
+# Transform to a the crs needed to do the cartogram transformation
+toy_merc <- st_transform(toy_temp_mean, 3857)
+# cartogram transformation
+toy_cartogram <- cartogram_cont(toy_merc, weight = "n", itermax = 5)
+# Transform back to original crs 
+toy_cartogram <- st_transform(toy_cartogram, st_crs(toy_temp_mean))
 
+# Plot cartogram using ggplot2
+ggplot(toy_cartogram) +
+  geom_sf(aes(fill = temp_mean), linewidth = 0, alpha = 0.9) +
+  theme_minimal() +
+  scale_fill_distiller(palette = "YlOrRd", direction= 1) +
+  xlab("Longitude") +
+  ylab("Latitude") +
+  labs(fill = "Temperature") +
+  theme(aspect.ratio=0.7)
+```
+
+## Solution 
+```{r}
+#| echo: true
+
+# only change to data is distribution
+toy_cartogram |>
+  mutate(temp_dist = distributional::dist_normal(temp_mean, temp_se^2)) |>
+  ggplot() +
+  geom_sf_sample(aes(geometry=county_geometry, 
+                     fill=temp_dist), linewidth=0) +
+   geom_sf(aes(geometry=county_geometry), fill=NA, colour="white") +
+  theme_minimal() +
+  scale_fill_distiller(palette = "YlOrRd", direction= 1) +
+  xlab("Longitude") +
+  ylab("Latitude") +
+  labs(fill = "Temperature") +
+  theme(aspect.ratio=0.7)
+```
