@@ -40,7 +40,6 @@ library(ggbeeswarm)
 library(ggforce)
 library(ggdist)
 library(ggridges)
-library(ggmosaic)
 library(nullabor)
 library(ozmaps)
 library(sf)
@@ -1291,7 +1290,7 @@ to enable making the better decisions and conclusions, or dare we say, inference
 Objective testing procedure:
 
 - **Simulate** data to *control pattern* being examined.
-- Use the **lineup protocol** to determine is a reader can *detect the structured plot from not structured null plots*.
+- Use the **lineup protocol** to determine if a reader can *detect the structured plot from not structured null plots*.
 
 <br><br>
 

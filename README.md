@@ -67,14 +67,49 @@ to incorporate uncertainty when visualisation options are limited.
 
 
 
-## Getting started (these details to come)
+## Getting started 
 
-<!--
-1. Install Quarto from the website.
-2. Setup your editor of choice to work with Quarto (syntax highlighting, renders and previews, etc.)
--->
+You should have a reasonably up to date version of R and R Studio, eg RStudio 2025.05.0+496 "Mariposa Orchid" and R version 4.5.0 (2025-04-11) "How About a Twenty-Six". Install these essential packages, and their dependencies.
 
-Copyright: Dianne Cook and Harriet Mason 2025
+```
+install.packages(c("ggplot2", 
+                   "tidyr", 
+                   "dplyr", 
+                   "readr", 
+                   "readxl",
+                   "stringr", 
+                   "forcats",
+                   "colorspace", 
+                   "patchwork",
+                   "broom", 
+                   "ggbeeswarm",
+                   "ggforce",
+                   "ggdist",
+                   "ggridges",
+                   "ggdibbler",
+                   "nullabor",
+                   "sf",
+                   "ggthemes",
+                   "conflicted"), 
+                   dependencies=c("Depends", "Imports"))
+```
+
+and to fully reproduce all the examples in the slides, also install these packages:
+
+```
+install.packages(c("rmapshaper",
+                   "brolgar",
+                   "modelr",
+                   "distributional",
+                   "gt",
+                   "cowplot",
+                   "gridExtra",
+                   "cartogram",
+                   "lubridate"), 
+                   dependencies=c("Depends", "Imports"))
+```
+
+Copyright: Dianne Cook and Harriet Masonm 2025
 
 These materials are licensed under a
 [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License][cc-by-nc-sa].
