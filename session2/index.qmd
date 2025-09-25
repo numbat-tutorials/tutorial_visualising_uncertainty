@@ -44,6 +44,15 @@ options(digits=3,
 
 # Introduction to Spatial Visualisation
 
+## Why focus on spatial visualisations?
+
+- Spatial case is a good example to work through because the aesthetics we have to express estimates are limited
+- Maps take up most of the usual aesthetics by being a representation of space
+  - position, size, shape, etc all have an implicit meaning in the mapping context
+  - colour/fill is usually the only aesthetic we have left
+  - can also get creative and do glyph maps (we will ignore this variation here)
+- Once we have filled in a map, colour/fill is often the only aesthetic that has
+        
 ## Citizen Scientist Data  
 
 - There have been reports of a strange spatial pattern in the temperatures of Iowa
@@ -286,20 +295,38 @@ p_choro + ggtitle("Low Standard Error")
 p_choro + ggtitle("High Standard Error")
 ```
 :::
+
+* One of these plots was made with the high standard error data, and the other was made with the low standard error data. Can you tell which is which?
+
 ::::
+
+## Exercise
+Make the high and low variance choropleth maps yourself, and see why they come out looking identical
 
 # Approaches to Spatial Uncertainty
 
-## Visualisation goals
-- We need to look at the data and identify:
-  - The spatial trend (does it exist or not)
-  - The statistical strength of the spatial trend
-  
+## Solution 1: add an axis for uncertainty
 
-## Solution: add an axis for uncertainty
+```{r}
+# load the package
+library(Vizumap)
+
+# load the upper Burdekin (UB) data and format it
+data(UB) # this returns a data frame, UB_tss, and a shapefile, UB_shp
+UB_dat <- read.uv(data = toy_temp_mean, estimate = "TSS", error = "TSS_error")
+
+# build a bivariate color palette
+UB_pal <- build_palette(name = "usr", colrange = list(colour = c("gold", "red4"), difC = c(4, 4)))
+
+# build the bivariate map and key, and then attach the key to the map
+UB_biv_map <- build_bmap(data = UB_dat, geoData = UB_shp, id = "scID", palette = UB_pal, terciles = TRUE)
+UB_biv_key <- build_bkey(data = UB_dat, palette = UB_pal, terciles = TRUE)
+attach_key(map = UB_biv_map, mapkey = UB_biv_key)
+```
+
+
 ![](images/bivar.jpeg){fig-align="center"}
 
-## Does this work? Not really
 - Pro
   - Included uncertainty and increased transparency
 - Cons
@@ -308,10 +335,8 @@ p_choro + ggtitle("High Standard Error")
     - Colour is not a simple 3D space
     - Using saturation hurts accessibility
 
-## Solution: blend the colours together!
+## Solution 2: blend the colours together
 ![](images/vsup.jpeg){fig-align="center"}
-
-## Does this work? Kind of... 
 
 - Pros
   - Included uncertainty and increased transparency
@@ -319,21 +344,28 @@ p_choro + ggtitle("High Standard Error")
 - Cons
   - Still have 2D Colour palette 
   - Standard error at which to blend colours is made up
-    - Blend at 1? 2? 4? 37?
     - Impossible to align with hypothesis testing
  
-## Solution: simulate a sample
+## Solution 3: simulate a sample
 
 ![](images/choro.jpeg){fig-align="center"}
 
-## Does this work? Almost!
 - Pros
   - Included uncertainty 
   - High uncertainty interferes with reading of plot (?)
   - 1D colour palette 
 
+## Popular R packages
+* `ggdibbler`
+  + Data: distribution from distributional
+  + Maps: pixel map, other non-spatial maps
+* `Vizumap`
+  + Data: Depends on the plot. Can take a distribution as a q function (pixel), or an estimate and standard error as two variables (bivar/VSUP and glyph)
+  + Maps: Biar/VSUP, pixel, glyph
+* `biscale`
+  + Data: Estimate and standard error as two variables
+  + Maps: Biar/VSUP map
 
-# Making a Pixel Map with `ggdibbler`
 
 ## Alternative software for incorperating uncertainty
 - Existing tidy data structures are not great for uncertain data
@@ -346,6 +378,9 @@ p_choro + ggtitle("High Standard Error")
   - *Very* computationally expensive
     - A simple map can take over a minute to run
   - Need to make every component separately then combine
+
+
+# Making a Pixel Map with `ggdibbler`
 
 ## `ggplot2` uses the grammar of graphics
 
