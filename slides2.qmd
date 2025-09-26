@@ -376,88 +376,159 @@ Make the high and low variance choropleth maps yourself, and see why they come o
   + Maps: Biar/VSUP map
 
 
-## Alternative software for incorperating uncertainty
-
-- Existing tidy data structures are not great for uncertain data
-- e.g. `Vizumap` 
-  - Makes Bivariate maps and Pixel (sample) maps
-  - Package is designed specifically for uncertainty
-- Issues
-  - `ggplot2` flexibility is lost
-    - e.g. you can only use one of three specific palettes
-  - *Very* computationally expensive
-    - A simple map can take over a minute to run
-  - Need to make every component separately then combine
-
-
 # Making a Pixel Map with `ggdibbler` {.transition-slide style="align: center;"}
 
-## `ggplot2` uses the grammar of graphics
+# A `ggdibbler` example
 
-![](images/gog1.jpg){fig-align="center"}
-
-
-## It is designed to take in data
-
-![](images/gog3.jpg){fig-align="center"}
-
-## Not theoretical distributions
-
-![](images/gog4.jpg){fig-align="center"}
-
-## This is what `ggdibbler` is for
-
-![](images/gog5.jpg){fig-align="center"}
-
-## Basic `ggdibbler` Example
+## Estimate the county distribution
+- Visualising an estimate, such as a mean, can make trends easier to see
+  + Should use the sampling distribution, but often we do not bother...
 
 ```{r}
-#| label: ggdibbler1
+#| include: false
+# Calculate County Distribution
+toy_temp_dist <- toy_temp_comp |>
+mutate(temp_dist_low = dist_normal(temp_mean, low_temp_se),
+temp_dist_high = dist_normal(temp_mean, high_temp_se)
+)
+
+```
+
+```{r}
+toy_temp_dist |>
+  as_tibble() |>
+  select(county_name, temp_dist_low, temp_dist_high, n) |>
+  head(5) |>
+  kbl()
+```
+
+## Using `ggdibbler` to plot a Distribution
+
+:::: {.columns}
+
+::: {.column}
+
+```{r}
+#| label: ggdibbler1a
 #| echo: true
 #| fig-align: center 
 
-library(ggdibbler)
 toy_temp_dist |> 
   ggplot() + 
   geom_sf_sample(aes(geometry = county_geometry,
-                     fill=temp_dist))
+                     fill=temp_dist_low))
 ```
+:::
+::: {.column}
+```{r}
+#| label: ggdibbler1n
+#| echo: true
+#| fig-align: center 
+
+toy_temp_dist |> 
+  ggplot() + 
+  geom_sf_sample(aes(geometry = county_geometry,
+                     fill=temp_dist_high))
+```
+
+:::
+::::
 
 ## Can utilise ggplot2 flexibility
 
+:::: {.columns}
+
+::: {.column}
+
 ```{r}
-#| label: ggdibbler2
-#| echo: true
+#| label: ggdibbler2a
+#| fig-width: 10
+#| fig-height: 7
+#| out-width: 100%
 #| fig-align: center 
-ggplot(toy_temp_dist) +
-  geom_sf_sample(aes(geometry=county_geometry, fill=temp_dist),  linewidth=0, n=7) +
+
+p1 <- ggplot(toy_temp_dist) +
+  geom_sf_sample(aes(geometry=county_geometry, fill=temp_dist_low),  linewidth=0, n=7) +
   geom_sf(aes(geometry = county_geometry), fill=NA, linewidth=0.5, colour="white") +
   theme_minimal() +
   scale_fill_distiller(palette = "YlOrRd", direction= 1) +
   xlab("Longitude") +
   ylab("Latitude") +
-  labs(fill = "Temperature") +
-  ggtitle("A super cool and customised plot")
-
+  labs(fill = "Temperature",
+title = "Low variance case")
+p1
 ```
 
-## Remember, the plot is random
+:::
 
+::: {.column}
 ```{r}
-#| label: ggdibbler3
-#| echo: true
-#| fig-align: center 
-ggplot(toy_temp_dist) +
-  geom_sf_sample(aes(geometry=county_geometry, fill=temp_dist),  linewidth=0, n=7) +
+#| label: ggdibbler2b
+#| fig-width: 10
+#| fig-height: 7
+#| out-width: 100%
+p2 <- ggplot(toy_temp_dist) +
+  geom_sf_sample(aes(geometry=county_geometry, fill=temp_dist_high),  linewidth=0, n=7) +
   geom_sf(aes(geometry = county_geometry), fill=NA, linewidth=0.5, colour="white") +
   theme_minimal() +
   scale_fill_distiller(palette = "YlOrRd", direction= 1) +
   xlab("Longitude") +
   ylab("Latitude") +
-  labs(fill = "Temperature") +
-  ggtitle("A super cool and customised plot")
-
+  labs(fill = "Temperature",
+title = "High variance case")
+p2
 ```
+:::
+::::
+
+## Can utilise ggplot2 flexibility
+
+:::: {.columns}
+
+::: {.column}
+
+```{r}
+#| label: ggdibbler3a
+#| fig-width: 10
+#| fig-height: 7
+#| out-width: 100%
+#| fig-align: center 
+
+p1 <- ggplot(toy_temp_dist) +
+  geom_sf_sample(aes(geometry=county_geometry, fill=temp_dist_low),  linewidth=0, n=7) +
+  geom_sf(aes(geometry = county_geometry), fill=NA, linewidth=0.5, colour="white") +
+  theme_minimal() +
+  scale_fill_distiller(palette = "YlOrRd", direction= 1) +
+  xlab("Longitude") +
+  ylab("Latitude") +
+  labs(fill = "Temperature",
+title = "Low variance case")
+p1
+```
+
+:::
+
+::: {.column}
+```{r}
+#| label: ggdibbler3b
+#| fig-width: 10
+#| fig-height: 7
+#| out-width: 100%
+p2 <- ggplot(toy_temp_dist) +
+  geom_sf_sample(aes(geometry=county_geometry, fill=temp_dist_high),  linewidth=0, n=7) +
+  geom_sf(aes(geometry = county_geometry), fill=NA, linewidth=0.5, colour="white") +
+  theme_minimal() +
+  scale_fill_distiller(palette = "YlOrRd", direction= 1) +
+  xlab("Longitude") +
+  ylab("Latitude") +
+  labs(fill = "Temperature",
+title = "High variance case")
+p2
+```
+:::
+::::
+
+*Remember, the plot is random*
 
 ## Exercise 2
 
