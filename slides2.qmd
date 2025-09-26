@@ -31,12 +31,19 @@ library(ggplot2)
 library(tidyr)
 library(dplyr)
 library(ggdibbler)
-library(gt)
 library(distributional)
-library(cowplot)
-library(gridExtra)
 library(cartogram)
 library(sf)
+library(scales)
+library(colorspace)
+library(kableExtra)
+library(conflicted)
+conflicts_prefer(dplyr::filter)
+conflicts_prefer(dplyr::select)
+conflicts_prefer(dplyr::slice)
+conflicts_prefer(dplyr::rename)
+conflicts_prefer(dplyr::mutate)
+conflicts_prefer(dplyr::summarise)
 options(digits=3, 
         repr.plot.width=15,
         repr.plot.height=8)
@@ -66,7 +73,6 @@ options(digits=3,
 
 ```{r}
 #| label: show-data
-library(kableExtra)
 temp_data <- toy_temp |>
   as_tibble() |>
   select(scientistID, county_name, recorded_temp) |>
@@ -324,25 +330,6 @@ Make the high and low variance choropleth maps yourself, and see why they come o
 # Approaches to Spatial Uncertainty {.transition-slide style="align: center;"}
 
 ## Solution 1: add an axis for uncertainty
-
-```{r}
-#| label: show-vizumap
-# load the package
-# remotes::install_github(repo = "lydialucchesi/Vizumap", build_vignettes = TRUE, force = TRUE)
-library(Vizumap)
-
-# load the upper Burdekin (UB) data and format it
-data(UB) # this returns a data frame, UB_tss, and a shapefile, UB_shp
-UB_dat <- read.uv(data = toy_temp_mean, estimate = "TSS", error = "TSS_error")
-
-# build a bivariate color palette
-UB_pal <- build_palette(name = "usr", colrange = list(colour = c("gold", "red4"), difC = c(4, 4)))
-
-# build the bivariate map and key, and then attach the key to the map
-UB_biv_map <- build_bmap(data = UB_dat, geoData = UB_shp, id = "scID", palette = UB_pal, terciles = TRUE)
-UB_biv_key <- build_bkey(data = UB_dat, palette = UB_pal, terciles = TRUE)
-attach_key(map = UB_biv_map, mapkey = UB_biv_key)
-```
 
 
 ![](images/bivar.jpeg){fig-align="center"}

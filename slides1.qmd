@@ -1317,8 +1317,8 @@ fc_b_samples |>
   ggplot() +
     geom_line(aes(x = Quarter, y = .sim, group = .rep),
       colour = "#027EB6", alpha=0.1) +
-    #geom_smooth(aes(x = Quarter, y = .sim, ), 
-    #  colour = "#027EB6", span=0.1) +
+    geom_line(data=fc_b, aes(x = Quarter, y = .mean), 
+      colour = "#027EB6") +
     autolayer(tourism_melb, Trips) +
     ylab("Trips") +
     theme(aspect.ratio = 0.6)
