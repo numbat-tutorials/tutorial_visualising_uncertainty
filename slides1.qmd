@@ -588,9 +588,6 @@ d1 + d2 + d3 + d4 + plot_layout(design=lout)
 - What are the key features of the data that we need to preserve in a plot?
 - Why the different aspect ratios?
 
-<!-- Distributions: density-jittered dotplot (ggbeeswarm, ggforce::geom_sina, geom_violin, ggridges)
--->
-
 :::
 
 ## Exercise 1
@@ -797,8 +794,8 @@ Examine individual fits. Too many to show all - sample multiple times to get thr
 
 ```{r}
 #| label: indiv-fits
-#| fig-width: 10
-#| fig-height: 7
+#| fig-width: 8
+#| fig-height: 5
 #| out-width: 100%
 wages_full <- wages_fct |>
   add_predictions(wages_fit, 
@@ -814,7 +811,9 @@ wages_full |> add_n_obs() |> filter(n_obs > 4) |>
   geom_point(aes(x = xp, y = ln_wages, 
                  colour = factor(id))) + 
   facet_wrap(~id, ncol=4)  +
-  xlab("Experience (years)") + ylab("Wages (ln)") +
+  scale_x_continuous("Experience (years)", 
+    breaks=seq(0, 12, 2)) +
+  ylab("Wages (ln)") +
   theme(aspect.ratio = 0.6, legend.position = "none")
 ```
 :::
@@ -842,17 +841,16 @@ Note that, this particular model fit makes the assumption that wages increase li
 :::: {.columns}
 ::: {.column width=70%}
 
-- There can be multiple leves of uncertainty:
+- There can be multiple levels of uncertainty:
     - **Example had two measurement levels** - fixed effect/demographic strata, random effects/individuals - but multiple ways to represent these.
-    - A **classical example** is: in a simple regression we have *confidence* intervals for the model estimates, and also *prediction* intervals for predicting new observations. 
-- Uncertainty is not just another variable, but some measures might be handled this way graphically. 
-- Some measure might be encoded in the data as an extra column, e.g. standard error, IQR. This can be used in the plot to incorporate uncertainty.
+    - A **classical example** is in a simple regression we have *confidence* intervals for the model estimates, and also *prediction* intervals for predicting new observations. 
+- Uncertainty is not just another variable, but some measures might be handled this way, and encoded in the data as an extra column, e.g. standard error, IQR. This can be used in the plot to incorporate uncertainty.
 - You need to decide what is the appropriate uncertainty measure for the problem. 
 
 :::
 ::: {.column width=30%}
 
-<br><br><br><br><br><br>
+<br><br><br><br>
 
 ::: {.fragment}
 
@@ -860,7 +858,7 @@ Note that, this particular model fit makes the assumption that wages increase li
 
 ::: {style="font-size: 150%;"}
 
-Multiple pieces of information on a plot tends to interfere with the perception of either one.
+Including uncertainty representation adds to the complexity, and multiple elements on a plot can interfere with the perception of either one.
 
 :::
 :::
@@ -963,20 +961,20 @@ c1 + c2 + c3 + plot_layout(ncol=1)
 :::: {.columns}
 ::: {.column width=60%}
 
-- Make primary information prominent: use pre-attentive elements like colour, make larger.
-- Place items to compare first near each other, main thing + uncertainty.
-- When using colour to map a two-ended continuous variable use a diverging palette, and conversely, for low-high continuous variable such as confidence use a sequential palette.
-- Axes and labels should be faint in the background, to be examined only when needing to interpret or quantify patterns.
-- Order items, categories by a numerical rank.
-- For separate plots, common axes to make comparison easier.
+- Make **primary information prominent**: use pre-attentive elements like colour, make larger.
+- Place items to **compare first near each other**, main thing + uncertainty.
+- When using colour to map a **two-ended** continuous variable use a **diverging** palette, and conversely, for *low-high* continuous variable such as confidence use a *sequential* palette.
+- **Axes and labels should be faint** in the background, to be examined only when needing to interpret or quantify patterns.
+- **Order items**, categories by a numerical rank.
+- For separate plots, **common axes** to make comparison easier.
 
 :::
 ::: {.column width=40%}
 ::: {.fragment style="font-size: 80%;"}
 
-<br><br><br>
+<br><br>
 
-Accessibility considerations when adding uncertainty to plots are harder because there is more information provided.
+*Accessibility considerations when adding uncertainty to plots are harder because there is more information provided.*
 
 - What is the focus? line, or the confidence bands?
 - Does the uncertainty representation obscure the signal?
@@ -989,19 +987,21 @@ Accessibility considerations when adding uncertainty to plots are harder because
 ## Application to uncertainty visualisation
 
 :::: {.columns}
-::: {.column width=70%}
+::: {.column width=60%}
 
-1. Make the main thing pre-attentive. It will draw attention to it first. 
-2. Map the uncertainty to a lower level of attentiveness.
-3. Uncertainty needs to be placed with the main thing in order to make comparison.
+1. Make the **main thing pre-attentive**. It will draw attention to the primary information, such as trend, median, mean, estimate, first. 
+2. Map the **uncertainty to a lower level of attentiveness**, so it can be considered secondarily. 
+3. Uncertainty needs to be **placed** with the main thing in order to **make comparison**. The purpose of including uncertainty representation is to compare pattern in the main thing relative to variation remaining.
 
 :::
-::: {.column width=30%}
+::: {.column width=40%}
 
 ::: {style="font-size: 120%;"}
 
 ::: {.fragment}
-<br><br><br><br><br><br>
+
+![](images/which-ruler.png)
+[Source: [http://dx.doi.org/10.4172/2153-0602.1000139](http://dx.doi.org/10.4172/2153-0602.1000139)]{.f50}
 
 *At the core of statistical reasoning is asking* **compared to what**.
 
@@ -1037,8 +1037,8 @@ What principle(s) is this using?
 
 ```{r}
 #| label: indiv-fits
-#| fig-width: 10
-#| fig-height: 7
+#| fig-width: 8
+#| fig-height: 5
 #| out-width: 100%
 #| echo: false
 ```
@@ -1052,16 +1052,56 @@ What principle(s) is this using?
 :::: {.columns}
 ::: {.column}
 
-Take a look at the plots made in Exercise 1. Ask yourself whether the main thing is pre-attentive, and the uncertainty representation is sitting a little into the background?
+1. Take a look at the plots made in Exercise 1. Ask yourself whether the main thing is pre-attentive, and the uncertainty representation is sitting a little into the background?
 
-Tinker with the design of one plot to make it better fit this principle.
+2. Tinker with the design of one plot to make it better fit this principle.
 
 :::
 ::: {.column}
 
-::: {.fragment}
+::: {.panel-tabset}
 
-Add solutions here
+## Inspirations
+
+## ggbeeswarm
+
+Make the median more prominent, relative the the observations.
+
+::: {style="font-size: 70%;"}
+
+```{r}
+#| fig-width: 8
+#| fig-height: 4
+#| out-width: 100%
+ggplot(melbtemp_2019, aes(x=month, y=temp)) +
+  geom_quasirandom() + 
+  stat_summary(geom="point", fun="median", 
+    colour="red", size=5) +
+  xlab("") + ylab("Temp (C)") +
+  ggtitle("A. ggbeeswarm::geom_quasirandom")
+```
+
+:::
+
+## violin + sina
+
+Add a representation of the median, fade the density by making it light grey.
+
+::: {style="font-size: 70%;"}
+
+```{r}
+#| fig-width: 8
+#| fig-height: 4
+#| out-width: 100%
+ggplot(melbtemp_2019, aes(x=month, y=temp)) +
+  geom_violin(fill = "grey80", colour=NA, alpha=0.7) +
+  geom_sina() +
+  stat_summary(geom="point", fun="median", 
+    colour="red", size=5) +
+  xlab("") + ylab("Temp (C)") +
+  ggtitle("B. geom_violin + ggforce::geom_sina")
+```
+:::
 
 :::
 
@@ -1296,7 +1336,7 @@ fc |>
 :::
 ::: {.column}
 
-::: {fragment}
+::: {.fragment}
 
 In what ways do you think this representation is better (or worse) than the previous representation?
 
@@ -1365,7 +1405,7 @@ Objective testing procedure:
 ## Try this 
 
 ```{r}
-#| label: lineup
+#| label: simulate-data
 #| echo: false
 nlev <- 8
 x <- 1:nlev
@@ -1376,6 +1416,11 @@ y_small <- y_large
 #y_small[6] <- y_small[6] - 5
 #y_small[7] <- y_small[7] - 6
 struct_d <- tibble(x, y=y_small)
+```
+
+```{r}
+#| label: lineup
+#| echo: false
 set.seed(130)
 noise_param <- 1
 noise_scale <- 30
@@ -1463,7 +1508,7 @@ countdown::countdown(1, left="0%", top="20%",
 
 Process 
 
-- group A or B
+- group **a** or **b**
 - pick the plot that is different
 - record choice, and why that plot looks different
 
@@ -1514,25 +1559,56 @@ l3
 
 ## Lineup experiment
 
-:::: {.columns}
-::: {.column}
+::: {.panel-tabset}
 
-Simulated data setup
+## Simulated data setup
 
 - **Time**: 8 instead of 24
 - **Count**: pattern is large wave
 - **Variance model**: uniform ranging from small to large. Poisson used to generate count. 
 
+::: {style="font-size: 70%;"}
+
+```{r}
+#| label: simulate-data
+#| eval: false
+```
+:::
+
+
+## Testing protocol
+
+:::: {.columns}
+::: {.column}
+
+1. Plot the structured data among a field of null plots, in two ways. (Can be more than two.)
+2. Ask two sets of independent observers to pick the plot that is most different.
+3. Compute ratio of number of detections to observers, for each design.
+4. The design with the highest ratio is the more powerful design.
+
+<br><br>
+[Source: [https://doi.org/10.1109/TVCG.2012.230](https://ieeexplore.ieee.org/document/6327249)]{.f50}
+
+
 :::
 ::: {.column}
 
-```{r}
-#| label: lineup
-#| eval: false
-```
+![](images/compare-designs.png)
 
 :::
 ::::
+
+## Code
+
+::: {style="font-size: 70%;"}
+```{r}
+#| label: lineup
+#| eval: false
+#| code-fold: false
+```
+:::
+
+:::
 
 
 ## End of session 1 {.center}
