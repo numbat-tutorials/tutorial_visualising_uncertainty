@@ -105,7 +105,9 @@ install.packages(c("rmapshaper",
                    "cowplot",
                    "gridExtra",
                    "cartogram",
-                   "lubridate"), 
+                   "lubridate",
+                   "fable",
+                   "tsibble"), 
                    dependencies=c("Depends", "Imports"))
 ```
 

@@ -517,3 +517,14 @@ toy_cartogram |>
   labs(fill = "Temperature") +
   theme(aspect.ratio=0.7)
 ```
+
+## Where to learn more
+
+- Kay, M. [ggdist: Visualizations of distributions and uncertainty ](https://mjskay.github.io/ggdist/index.html)
+- Hofmann, Follett, Majumder, Cook 2012 [Graphical Tests for Power Comparison of Competing Designs](https://ieeexplore.ieee.org/document/6327249)
+- [nullabor package](https://dicook.github.io/nullabor/)
+- Spiegelhalter, D. (2017), [Risk and uncertainty communication](https://www.annualreviews.org/docserver/fulltext/statistics/4/1/annurev-statistics-010814-020148.pdf)
+
+## End of session 2 {.center}
+
+<a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.

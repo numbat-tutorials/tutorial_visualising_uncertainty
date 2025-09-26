@@ -50,6 +50,8 @@ library(modelr)
 library(distributional)
 library(lubridate)               
 library(ggthemes)
+library(fable)
+library(tsibble)
 library(conflicted)
 conflicts_prefer(dplyr::filter)
 conflicts_prefer(dplyr::select)
@@ -1266,9 +1268,67 @@ The approaches used on the barcharts here are the same approaches that apply to 
 
 ## Exercise 3
 
-forecast plots, and ask what is the version of uncertainty applied, confidence bands vs multiple samples
+:::: {.columns}
+::: {.column}
 
+This is a forecast of business trips to Melbourne for 2018-2022, based on data from 2000-2017. How is the uncertainty represented?
 
+::: {style="font-size: 70%;"}
+
+```{r}
+#| label: forecast1
+#| fig-width: 6
+#| fig-height: 4
+#| out-width: 100%
+tourism_melb <- tourism %>%
+  filter(Region == "Melbourne", Purpose == "Business")
+fit <- tourism_melb %>%
+  model(
+    ets = ETS(Trips ~ trend("A"))
+  )
+fc <- fit |>
+  forecast(h = "5 years")
+fc |>
+  autoplot(tourism_melb) +
+    theme(aspect.ratio = 0.6)
+```
+
+:::
+
+:::
+::: {.column}
+
+::: {fragment}
+
+In what ways do you think this representation is better (or worse) than the previous representation?
+
+::: {style="font-size: 70%;"}
+
+```{r}
+#| label: forecast2
+#| fig-width: 6
+#| fig-height: 4
+#| out-width: 100%
+fc_b <- fit |>
+  forecast(h = "5 years", bootstrap = TRUE)
+fc_b_samples <- fit |>
+  generate(h = 20, times = 50, bootstrap = TRUE)
+fc_b_samples |>
+  ggplot() +
+    geom_line(aes(x = Quarter, y = .sim, group = .rep),
+      colour = "#027EB6", alpha=0.1) +
+    #geom_smooth(aes(x = Quarter, y = .sim, ), 
+    #  colour = "#027EB6", span=0.1) +
+    autolayer(tourism_melb, Trips) +
+    ylab("Trips") +
+    theme(aspect.ratio = 0.6)
+``` 
+
+:::
+
+:::
+:::
+::::
 
 # Deciding which is the best design {.transition-slide}
 
@@ -1476,13 +1536,6 @@ Simulated data setup
 :::
 ::::
 
-
-## Where to learn more
-
-- Kay, M. [ggdist: Visualizations of distributions and uncertainty ](https://mjskay.github.io/ggdist/index.html)
-- Hofmann, Follett, Majumder, Cook 2012 [Graphical Tests for Power Comparison of Competing Designs](https://ieeexplore.ieee.org/document/6327249)
-- [nullabor package](https://dicook.github.io/nullabor/)
-- Spiegelhalter, D. (2017), [Risk and uncertainty communication](https://www.annualreviews.org/docserver/fulltext/statistics/4/1/annurev-statistics-010814-020148.pdf)
 
 ## End of session 1 {.center}
 
