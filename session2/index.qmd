@@ -31,12 +31,13 @@ library(ggplot2)
 library(tidyr)
 library(dplyr)
 library(ggdibbler)
-library(gt)
 library(distributional)
-library(cowplot)
-library(gridExtra)
 library(cartogram)
 library(sf)
+library(scales)
+library(colorspace)
+library(kableExtra)
+
 options(digits=3, 
         repr.plot.width=15,
         repr.plot.height=8)
@@ -63,7 +64,6 @@ options(digits=3,
 
 
 ```{r}
-library(kableExtra)
 temp_data <- toy_temp |>
   as_tibble() |>
   select(scientistID, county_name,recorded_temp) |>
@@ -309,23 +309,6 @@ Make the high and low variance choropleth maps yourself, and see why they come o
 
 ## Solution 1: add an axis for uncertainty
 
-```{r}
-# load the package
-library(Vizumap)
-
-# load the upper Burdekin (UB) data and format it
-data(UB) # this returns a data frame, UB_tss, and a shapefile, UB_shp
-UB_dat <- read.uv(data = toy_temp_mean, estimate = "TSS", error = "TSS_error")
-
-# build a bivariate color palette
-UB_pal <- build_palette(name = "usr", colrange = list(colour = c("gold", "red4"), difC = c(4, 4)))
-
-# build the bivariate map and key, and then attach the key to the map
-UB_biv_map <- build_bmap(data = UB_dat, geoData = UB_shp, id = "scID", palette = UB_pal, terciles = TRUE)
-UB_biv_key <- build_bkey(data = UB_dat, palette = UB_pal, terciles = TRUE)
-attach_key(map = UB_biv_map, mapkey = UB_biv_key)
-```
-
 
 ![](images/bivar.jpeg){fig-align="center"}
 
@@ -368,46 +351,36 @@ attach_key(map = UB_biv_map, mapkey = UB_biv_key)
   + Data: Estimate and standard error as two variables
   + Maps: Biar/VSUP map
 
+# A `ggdibbler` example
 
-## Alternative software for incorperating uncertainty
-- Existing tidy data structures are not great for uncertain data
-- e.g. `Vizumap` 
-  - Makes Bivariate maps and Pixel (sample) maps
-  - Package is designed specifically for uncertainty
-- Issues
-  - `ggplot2` flexibility is lost
-    - e.g. you can only use one of three specific palettes
-  - *Very* computationally expensive
-    - A simple map can take over a minute to run
-  - Need to make every component separately then combine
+## Estimate the county distribution
+- Visualising an estimate, such as a mean, can make trends easier to see
+  + Should use the sampling distribution, but often we do not bother...
 
+```{r}
+#| include: false
+# Calculate County Distribution
+toy_temp_dist <- toy_temp_mean |>
+mutate(temp_dist = dist_normal(temp_mean, temp_se))
 
-# Making a Pixel Map with `ggdibbler`
+# print version
+dist_print <- toy_temp_dist |> 
+  select(county_name, temp_dist, n) |>
+  head(5)
 
-## `ggplot2` uses the grammar of graphics
+```
 
-![](images/gog1.jpg){fig-align="center"}
+```{r}
+kbl(dist_print)
+```
 
-
-## It is designed to take in data
-
-![](images/gog3.jpg){fig-align="center"}
-
-## Not theoretical distributions
-
-![](images/gog4.jpg){fig-align="center"}
-
-## This is what `ggdibbler` is for
-
-![](images/gog5.jpg){fig-align="center"}
-
-## Basic `ggdibbler` Example
+## Using `ggdibbler` to plot a Distribution
 
 ```{r}
 #| echo: true
 #| fig-align: center 
 
-library(ggdibbler)
+
 toy_temp_dist |> 
   ggplot() + 
   geom_sf_sample(aes(geometry = county_geometry,
