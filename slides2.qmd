@@ -325,7 +325,7 @@ p_choro + ggtitle("High Standard Error")
 
 ## Exercise 1
 
-Make the high and low variance choropleth maps yourself, and see why they come out looking identical
+Run the code to make the choropleth maps. Change the variance in the data and re-plot, to see that nothing changes. 
 
 # Approaches to Spatial Uncertainty {.transition-slide style="align: center;"}
 
@@ -600,9 +600,14 @@ toy_cartogram |>
 ## Where to learn more
 
 - Kay, M. [ggdist: Visualizations of distributions and uncertainty ](https://mjskay.github.io/ggdist/index.html)
+- Wilke, C. O. [ggridges](https://cran.r-project.org/web/packages/ggridges/vignettes/introduction.html)
+- Pedersen, T. [ggforce](https://ggforce.data-imaginist.com/)
 - Hofmann, Follett, Majumder, Cook 2012 [Graphical Tests for Power Comparison of Competing Designs](https://ieeexplore.ieee.org/document/6327249)
 - [nullabor package](https://dicook.github.io/nullabor/)
 - Spiegelhalter, D. (2017), [Risk and uncertainty communication](https://www.annualreviews.org/docserver/fulltext/statistics/4/1/annurev-statistics-010814-020148.pdf)
+- Correll, Moritz, Heer (2018) [Value-Suppressing Uncertainty Palettes](https://doi.org/10.1145/3173574.3174216)
+- Hullman et al (2018) [Imagining Replications](https://ieeexplore.ieee.org/document/8017624)
+- Lucchesi, Kuhnert, Wikle [Vizumap](https://joss.theoj.org/papers/10.21105/joss.02409)
 
 ## End of session 2 {.center}
 
