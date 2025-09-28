@@ -62,7 +62,26 @@ options(digits=3,
   - position, size, shape, etc. all have an implicit meaning in the mapping context
   - colour/fill is usually the only aesthetic we have left
   - can also get creative and do glyph maps (we will ignore this variation here)
-        
+
+:::: {.columns}  
+::: {.column}
+:::
+
+::: {.column}
+
+<br>
+
+::: {.callout-note appearance="simple"}
+
+::: {style="font-size: 150%;"}
+
+Spatial data takes up the two dimensions of the display leaving colour and fill to map uncertainty.
+
+:::
+:::
+:::
+::::
+
 ## Example: Citizen Scientist Data  
 
 - There have been reports of a strange spatial pattern in the temperatures of Iowa
@@ -273,9 +292,9 @@ p_bubble
 :::: {.columns}
 
 ::: {.column width=70%} 
-- It turns out the citizen scientists are using some pretty old tools
+- It turns out the citizen scientists are using some pretty old tools.
 - The standard error **could** be up to three times what we would estimate with our usual assumptions.
-- We want to see both versions of the data so we can see the impact of this measurement error
+- We want to see both versions of the data so we can see the impact of this change.
 
 ```{r}
 #| label: compute-var
@@ -337,10 +356,10 @@ One of these maps was made using the estimate with the high standard error, the 
 ::: {.column}
 #### Get comfortable working with spatial features yourself  
 
-* The citizen scientist data is available in the `ggdibbler` package as `toy_temp`  
-* Go through the steps we worked through thus far in the tutorial, and get your estimate and standard error variables
-* Experiment changing the standard error to see if there is an impact on the plot   
-* You can also try adding county names, changing the colour scale, and making other aesthetic changes to the map
+* The citizen scientist data is available in the `ggdibbler` package as `toy_temp`.
+* Go through the steps we worked through thus far in the tutorial, and get your estimate and standard error variables.
+* Experiment changing the standard error to see if there is an impact on the plot.
+* You can also try adding county names, changing the colour scale, and making other aesthetic changes to the map.
 
 :::
 
@@ -381,15 +400,30 @@ countdown::countdown(10,
 # Approaches to Spatial Uncertainty {.transition-slide style="align: center;"}
 
 ## Looking at current approaches
-We are going to go through some uncertainty visualisation methods assess them on the signal suppression criteria
 
-### Remember uncertainty visualisation should... 
+We are going to go through some uncertainty visualisation methods assess them on the signal suppression criteria.
 
-#### 1) Reinforce justified signals
-  *We want to trust the results*
+:::: {.columns}
+::: {.column width=40%}
+:::
+::: {.column width=60%}
 
-#### 2) Hide signals that are just noise
-*We don’t want to see something that isn’t there*
+::: {.callout-note appearance="simple"}
+
+::: {style="font-size: 150%;"}
+
+Remember, uncertainty visualisation should 
+
+1. Reinforce justified signals <br>
+*We want to trust the results*
+
+2. Hide signals that are primarily noise<br>
+*We don’t want to see something that isn't there*
+
+:::
+:::
+:::
+::::
 
 ## Solution 1: add an axis for uncertainty (Bivar)
 
