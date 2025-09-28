@@ -59,12 +59,11 @@ options(digits=3,
 
 - Spatial case is a good example to work through because the aesthetics we have to express estimates are limited
 - Maps take up most of the usual aesthetics by being a representation of space
-  - position, size, shape, etc all have an implicit meaning in the mapping context
+  - position, size, shape, etc. all have an implicit meaning in the mapping context
   - colour/fill is usually the only aesthetic we have left
   - can also get creative and do glyph maps (we will ignore this variation here)
-- Once we have filled in a map, colour/fill is often the only aesthetic that has
         
-## Citizen Scientist Data  
+## Example: Citizen Scientist Data  
 
 - There have been reports of a strange spatial pattern in the temperatures of Iowa
 - We get some citizen scientists to measure data at their home and report back
@@ -73,6 +72,7 @@ options(digits=3,
 
 ```{r}
 #| label: show-data
+#| fig-align: center
 temp_data <- toy_temp |>
   as_tibble() |>
   select(scientistID, county_name, recorded_temp) |>
@@ -84,10 +84,12 @@ kbl(temp_data)
 
 ## We could just plot the data...
 
-- We often get spatial data in terms of longitude and latitude which we can plot directly
+* We often can plot the longitude and latitude directly using `geom_point`. 
+* While this approach has a low barrier to entry, it lacks the contextual information that gives our plots meaning.
 
 ```{r}
 #| echo: false
+#| fig-align: center
 p_data <- ggplot(toy_temp) +
   geom_jitter(aes(x=county_longitude, y=county_latitude, colour=recorded_temp), 
               width=7000, height =7000, alpha=0.7) +
@@ -101,16 +103,16 @@ p_data <- ggplot(toy_temp) +
 p_data
 ```
 
-- This approach is easy but lacks the contextual information that gives our plots meaning.
 
 ## Spatial features objects
 
-* SF objects are differentiated from a tibble because of additional metata in the Coordinate reference system (CRS). Specifically: 
+* SF objects are differentiated from our usual `tibble` by the additional metata in the Coordinate reference system (CRS)
   + Assumptions about the shape of the planet (geodetic datum)
   + Distortions we will/won't accept when drawing the map (map projection)
   
 ```{r}
 #| label: make-map
+#| fig-align: center
 #| echo: false
 p_data_sf <- ggplot(toy_temp) +
   geom_sf(aes(geometry=county_geometry), fill="white") +
@@ -137,7 +139,8 @@ p_data_sf
 ## Estimate the county mean
 
 - Visualising an estimate, such as a mean, can make trends easier to see
-  + Should use the sampling distribution, but often we do not bother...
+  + This estimate has a standard error, but we rarely integrate it into our plots
+
 
 ```{r}
 #| label: compute-summaries
@@ -160,6 +163,7 @@ toy_temp_mean <- toy_temp |>
   ungroup()
 ```
 
+::: {style="font-size: 70%;"}
 ```{r}
 #| label: compute-mean
 #| echo: true
@@ -171,6 +175,7 @@ toy_temp |>
             temp_se = sd(recorded_temp)/sqrt(n()),
             n = n()) 
 ```
+::: 
 
 ```{r}
 kbl(mean_print)
@@ -197,10 +202,12 @@ p_choro
 
 ::: {.column width="40%"}
 
-* Usually spatial data is shown using a choropleth map
-  + Choropleth maps shade an area according to an average or total
-* We can also weight according to a different variable (such as sample size)
-  + e.g. Cartograms, and Bubble plots
+* Usually spatial data is shown using a choropleth map,
+  + Choropleth maps shade an area according our statistic of interest
+* We can also weight the area by another variable, such as sample size
+  + e.g. cartograms, and bubble plots
+* Does this plot follow the principles of signal suppression?
+* Is there a noticeable difference in the way these plots convey signal?
 
 :::
 
@@ -276,23 +283,24 @@ p_bubble
 
 # Calculate extra variance
 toy_temp_comp <- toy_temp_mean |> 
-  mutate(low_temp_se = temp_se,
-         high_temp_se = 3*temp_se) |>
+  mutate(low_se = temp_se,
+         high_se = 3*temp_se) |>
   select(-temp_se)
   
-comp_print <- toy_temp_comp |>
-  select(county_name, temp_mean, low_temp_se,
-         high_temp_se, n) |>
-  head(3)
 ```
 
 ```{r}
-kbl(comp_print)
+toy_temp_comp |>
+  as_tibble() |>
+  select(county_name, temp_mean, low_se,
+         high_se) |>
+  head(3) |>
+  kbl()
 ```
 :::
 
 ::: {.column width=30%}
-![](images/thermo.jpeg){#fig-thermo width=100%}
+![](images/thermo.jpeg){width=100%}
 :::
 
 ::::
@@ -319,49 +327,132 @@ p_choro + ggtitle("High Standard Error")
 ```
 :::
 
-* One of these plots was made with the high standard error data, and the other was made with the low standard error data. Can you tell which is which?
+One of these maps was made using the estimate with the high standard error, the other was made with the estimate from the low standard error. Can you tell which is which?
 
 ::::
 
 ## Exercise 1
+:::: {.columns}
 
-Run the code to make the choropleth maps. Change the variance in the data and re-plot, to see that nothing changes. 
+::: {.column}
+#### Get comfortable working with spatial features yourself  
+
+* The citizen scientist data is available in the `ggdibbler` package as `toy_temp`  
+* Go through the steps we worked through thus far in the tutorial, and get your estimate and standard error variables
+* Experiment changing the standard error to see if there is an impact on the plot   
+* You can also try adding county names, changing the colour scale, and making other aesthetic changes to the map
+
+:::
+
+::: {.column}
+```{r}
+#| label: extrachoro
+#| fig-width: 10
+#| fig-height: 7
+#| out-width: 100%
+ggplot(toy_temp_mean) +
+  geom_sf(aes(geometry=county_geometry, fill=temp_mean), linewidth = 0, alpha=0.9) +
+  geom_text(aes(y=county_latitude, 
+                x=county_longitude,
+                label = county_name), 
+            size=2, position = position_dodge(width=1)) +
+  theme_minimal() +
+  scale_fill_distiller(palette = "Spectral") +
+  xlab("Longitude") +
+  ylab("Latitude") +
+  labs(fill = "Temperature",
+       title = "Practice map") +
+  theme(aspect.ratio=0.7)
+```
+
+```{r}
+#| echo: false
+countdown::countdown(10,
+  color_background="#027EB6",
+  color_text="white",
+  color_running_background="#027EB6",
+  color_running_text="white",
+  color_finished_background="#D93F00")
+```
+
+:::
+::::
 
 # Approaches to Spatial Uncertainty {.transition-slide style="align: center;"}
 
-## Solution 1: add an axis for uncertainty
+## Looking at current approaches
+We are going to go through some uncertainty visualisation methods assess them on the signal suppression criteria
 
+### Remember uncertainty visualisation should... 
 
+#### 1) Reinforce justified signals
+  *We want to trust the results*
+
+#### 2) Hide signals that are just noise
+*We don’t want to see something that isn’t there*
+
+## Solution 1: add an axis for uncertainty (Bivar)
+
+### Questions to think about...
+:::: {.columns}
+
+::: {.column width="30%"}
+* Is there a visible difference between the high and low uncertainty cases?
+* Is the trend still visible in the high uncertainty case?
+* Is this approach accessible?
+  + Is colour a simple 3D space?
+  + Can everyone see changes in saturation?
+
+:::
+
+::: {.column width="70%"}
 ![](images/bivar.jpeg){fig-align="center"}
 
-- Pro
-  - Included uncertainty and increased transparency
-- Cons
-  - High uncertainty signal still very visible
-  - 2D palette is harder to read
-    - Colour is not a simple 3D space
-    - Using saturation hurts accessibility
+:::
 
-## Solution 2: blend the colours together
+::::
+
+## Solution 2: blend the colours together (VSUP)
+
+### Questions to think about...
+
+:::: {.columns}
+
+::: {.column width="30%"}
+
+* Is there a visible difference between the high and low uncertainty cases?
+* Is the trend still visible in the high uncertainty case?
+* Is this approach accessible?
+* At what level of uncertainty should you blend two colours together?
+
+:::
+
+::: {.column width="70%"}
 
 ![](images/vsup.jpeg){fig-align="center"}
-
-- Pros
-  - Included uncertainty and increased transparency
-  - Removed false signals
-- Cons
-  - Still have 2D Colour palette 
-  - Standard error at which to blend colours is made up
-    - Impossible to align with hypothesis testing
+:::
+::::
  
-## Solution 3: simulate a sample
+## Solution 3: simulate a sample (pixel)
+
+### Questions to think about...
+
+:::: {.columns}
+
+::: {.column width="30%"}
+
+* Is there a visible difference between the high and low uncertainty cases?
+* Is the trend still visible in the high uncertainty case?
+* Is this approach accessible?
+* What has replaced the manual colour blending in this approach?
+
+:::
+
+::: {.column width="70%"}
 
 ![](images/choro.jpeg){fig-align="center"}
-
-- Pros
-  - Included uncertainty 
-  - High uncertainty interferes with reading of plot (?)
-  - 1D colour palette 
+:::
+::::
 
 ## Popular R packages
 
@@ -370,71 +461,87 @@ Run the code to make the choropleth maps. Change the variance in the data and re
   + Maps: pixel map, other non-spatial maps
 * `Vizumap`
   + Data: Depends on the plot. Can take a distribution as a q function (pixel), or an estimate and standard error as two variables (bivar/VSUP and glyph)
-  + Maps: Biar/VSUP, pixel, glyph
+  + Maps: Bivar/VSUP, pixel, glyph
 * `biscale`
   + Data: Estimate and standard error as two variables
-  + Maps: Biar/VSUP map
+  + Maps: Bivar/VSUP map
 
 
 # Making a Pixel Map with `ggdibbler` {.transition-slide style="align: center;"}
 
 # A `ggdibbler` example
+![](images/gglogo2.png){fig-align="center"}
 
-## Estimate the county distribution
-- Visualising an estimate, such as a mean, can make trends easier to see
-  + Should use the sampling distribution, but often we do not bother...
+## `distributional` and `ggdibbler` ecosystem
 
+![](images/tibblevsdibble.jpeg){fig-align="center"}
+
+## Using distributional
+* Expressing an estimate as a random variable using `distributional` makes the uncertainty more explicit
+  + We will make a new variable, `temp_dist` that contains the sampling distribution of `temp_mean`
+  + *Note: distributional uses standard deviation, but prints the variance.*
+
+::: {style="font-size: 70%;"}
 ```{r}
-#| include: false
+#| label: distdata
+#| echo: true
 # Calculate County Distribution
-toy_temp_dist <- toy_temp_comp |>
-mutate(temp_dist_low = dist_normal(temp_mean, low_temp_se),
-temp_dist_high = dist_normal(temp_mean, high_temp_se)
-)
-
+toy_temp_mean <- toy_temp_mean |>
+  mutate(temp_dist = dist_normal(temp_mean, temp_se))
 ```
+:::
 
 ```{r}
-toy_temp_dist |>
+#| label: distdataprint
+toy_temp_mean |>
   as_tibble() |>
-  select(county_name, temp_dist_low, temp_dist_high, n) |>
+  select(county_name, temp_mean, temp_se, temp_dist, n) |>
   head(5) |>
   kbl()
+  
 ```
 
-## Using `ggdibbler` to plot a Distribution
+## Comparing `ggplot` to `ggdibbler`
 
 :::: {.columns}
 
 ::: {.column}
 
+
+#### `ggplot` code
+
 ```{r}
-#| label: ggdibbler1a
+#| label: ggplot1a
 #| echo: true
+#| code-fold: false
 #| fig-align: center 
 
-toy_temp_dist |> 
+toy_temp_mean |> 
   ggplot() + 
-  geom_sf_sample(aes(geometry = county_geometry,
-                     fill=temp_dist_low))
+  geom_sf(aes(geometry = county_geometry,
+                     fill=temp_mean))
 ```
+
 :::
+
 ::: {.column}
+#### `ggdibbler` code
+
 ```{r}
-#| label: ggdibbler1n
+#| label: ggdibbler1b
 #| echo: true
+#| code-fold: false
 #| fig-align: center 
 
-toy_temp_dist |> 
+toy_temp_mean |> 
   ggplot() + 
   geom_sf_sample(aes(geometry = county_geometry,
-                     fill=temp_dist_high))
+                     fill = temp_dist))
 ```
-
 :::
 ::::
 
-## Can utilise ggplot2 flexibility
+## High and low variance comparison with `ggdibbler`
 
 :::: {.columns}
 
@@ -446,6 +553,10 @@ toy_temp_dist |>
 #| fig-height: 7
 #| out-width: 100%
 #| fig-align: center 
+
+toy_temp_dist <- toy_temp_mean |>
+  mutate(temp_dist_low = temp_dist,
+         temp_dist_high = dist_normal(temp_mean, 3*temp_se))
 
 p1 <- ggplot(toy_temp_dist) +
   geom_sf_sample(aes(geometry=county_geometry, fill=temp_dist_low),  linewidth=0, n=7) +
@@ -480,8 +591,9 @@ p2
 ```
 :::
 ::::
+*Remember, the plot is random*
 
-## Can utilise ggplot2 flexibility
+## High and low variance comparison with `ggdibbler`
 
 :::: {.columns}
 
@@ -535,7 +647,7 @@ p2
 :::: {.columns}
 
 ::: {.column}
-Here is the code that was used to make the cartogram from earlier in the session. Using the standard error provided in `toy_temp_mean`, can you make a `ggdibbler` version of this plot?
+Here is the code that was used to make the cartogram from earlier in the session. Using `distributional` and the standard error provided in `toy_temp_mean`, can you make a `ggdibbler` version of this plot?
 
 ```{r}
 #| echo: false
@@ -553,6 +665,7 @@ countdown::countdown(10, left="10%", bottom="35%",
 ::: {.panel-tabset}
 
 ## Cartogram with no uncertainty
+::: {style="font-size: 70%;"}
 ```{r}
 #| label: example2
 #| echo: true
@@ -573,8 +686,9 @@ ggplot(toy_cartogram) +
   labs(fill = "Temperature") +
   theme(aspect.ratio=0.7)
 ```
-
+:::
 ## Check
+::: {style="font-size: 70%;"}
 ```{r}
 #| label: example2-sol
 #| echo: true
@@ -595,19 +709,25 @@ toy_cartogram |>
 ```
 :::
 :::
+:::
 ::::
 
-## Where to learn more
+
+## Where to learn more {.smaller}
 
 - Kay, M. [ggdist: Visualizations of distributions and uncertainty ](https://mjskay.github.io/ggdist/index.html)
 - Wilke, C. O. [ggridges](https://cran.r-project.org/web/packages/ggridges/vignettes/introduction.html)
 - Pedersen, T. [ggforce](https://ggforce.data-imaginist.com/)
-- Hofmann, Follett, Majumder, Cook 2012 [Graphical Tests for Power Comparison of Competing Designs](https://ieeexplore.ieee.org/document/6327249)
+- Hofmann, Follett, Majumder, Cook (2012) [Graphical Tests for Power Comparison of Competing Designs](https://ieeexplore.ieee.org/document/6327249)
 - [nullabor package](https://dicook.github.io/nullabor/)
 - Spiegelhalter, D. (2017), [Risk and uncertainty communication](https://www.annualreviews.org/docserver/fulltext/statistics/4/1/annurev-statistics-010814-020148.pdf)
 - Correll, Moritz, Heer (2018) [Value-Suppressing Uncertainty Palettes](https://doi.org/10.1145/3173574.3174216)
 - Hullman et al (2018) [Imagining Replications](https://ieeexplore.ieee.org/document/8017624)
 - Lucchesi, Kuhnert, Wikle [Vizumap](https://joss.theoj.org/papers/10.21105/joss.02409)
+- [Distributional package](https://pkg.mitchelloharawild.com/distributional/)
+- [ggdibbler package](https://harriet-mason.github.io/ggdibbler/)
+- Kinkeldey, MacEachren, Riveiro, Schiewe (2017) [Evaluating the effect of visually represented geodata uncertainty on decision-making](https://doi.org/10.1080/15230406.2015.1089792)
+- Mason, Cook, Goodwin, Tanaka, VanderPlas (2024) [The Noisy Work of Uncertainty Visualisation Research](https://doi.org/10.48550/arXiv.2411.10482)
 
 ## End of session 2 {.center}
 
