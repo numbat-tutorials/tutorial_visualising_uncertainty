@@ -51,6 +51,10 @@ This session will focus on introducing common ways of representing uncertainty i
 | **Uncertainty representation in different types of problems**             | Understanding and comparing univariate and bivariate distributions, temporal and spatial data, indexes, networks |
 | **Deciding which is the best design**             | How to compare and test different designs in relation to information perceived |
 
+[Link to Session 1 slides](slides1.html)
+
+[Link to Session 1 R code](slides1.R)
+
 ### Session 2: Diving deeper into uncertainty visualisation using examples in spatial data
 
 This session will focus specifically on uncertainty visualisation for spatial data. 
@@ -65,6 +69,9 @@ to incorporate uncertainty when visualisation options are limited.
 | **Hands on mapping example**                                        | Work through the initial stages of a visualisation task with special focus on understanding how to quantify uncertainty, and avoid losing it as you move through the stages of a data analysis. |
 | **R packages for visualising uncertainty in maps**                                                         | Go through some popular packages for visualising spatial uncertainty in R. Understand the data format each package accepts, and see the various plot options.  |
 
+[Link to Session 2 slides](slides2.html)
+
+[Link to Session 2 R code](slides2.R)
 
 
 ## Getting started 
