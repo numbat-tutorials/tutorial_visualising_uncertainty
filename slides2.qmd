@@ -749,6 +749,8 @@ toy_cartogram |>
 
 ## Where to learn more {.smaller}
 
+- Wilke, C. [Fundamentals of Data Visualization](https://clauswilke.com/dataviz/)
+- Healy, K. [Data visualization](https://socviz.co/index.html#preface)
 - Kay, M. [ggdist: Visualizations of distributions and uncertainty ](https://mjskay.github.io/ggdist/index.html)
 - Wilke, C. O. [ggridges](https://cran.r-project.org/web/packages/ggridges/vignettes/introduction.html)
 - Pedersen, T. [ggforce](https://ggforce.data-imaginist.com/)
